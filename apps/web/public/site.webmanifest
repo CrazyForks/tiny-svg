@@ -1,0 +1,10 @@
+{
+  "name": "Tiny SVG",
+  "short_name": "Tiny SVG",
+  "description": "Free online SVG optimizer and converter. Compress SVG files up to 70%, convert to React, Vue, and Svelte components.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": []
+}

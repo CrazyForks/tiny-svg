@@ -319,7 +319,11 @@ function OptimizeComponent() {
   );
 
   const isDragging = useDragAndDrop();
-  usePasteHandler(setOriginalSvg, setHasAutoSwitchedTab);
+
+  usePasteHandler({
+    setOriginalSvg,
+    setHasAutoSwitchedTab,
+  });
 
   const prettifiedOriginal = usePrettifiedSvg(
     originalSvg,

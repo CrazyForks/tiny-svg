@@ -104,8 +104,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "canonical", href: "https://tiny-svg.com/" },
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
     ],
   }),
@@ -148,7 +146,7 @@ function RootDocument() {
           type="application/ld+json"
         />
       </head>
-      <body className="overflow-x-hidden">
+      <body className="overflow-x-hidden" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ErrorBoundary>
             <div className="grid h-svh grid-rows-[1fr]">

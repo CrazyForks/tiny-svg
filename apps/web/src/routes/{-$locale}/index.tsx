@@ -1,17 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { Locales } from "intlayer";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useIntlayer } from "react-intlayer";
-import { toast } from "sonner";
 import { LocalizedLink } from "@/components/intlayer/localized-link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UploadBox } from "@/components/upload-box";
+import { useDragAndDrop } from "@/hooks/use-drag-and-drop";
+import { usePasteHandler } from "@/hooks/use-paste-handler";
 import { getLatestBlogPosts } from "@/lib/blog";
-import {
-  extractSvgFromBase64,
-  isSvgContent,
-  readFileAsText,
-} from "@/lib/file-utils";
+import { readFileAsText } from "@/lib/file-utils";
 import { useSvgStore } from "@/store/svg-store";
 
 const LATEST_POSTS_COUNT = 4;
@@ -32,7 +29,6 @@ function HomeComponent() {
   const navigate = useNavigate();
   const { latestPosts } = Route.useLoaderData();
   const { setOriginalSvg } = useSvgStore();
-  const [isDragging, setIsDragging] = useState(false);
   const { hero, features, blog, messages } = useIntlayer("home");
 
   const handleFileUpload = useCallback(
@@ -44,68 +40,15 @@ function HomeComponent() {
     [setOriginalSvg, navigate]
   );
 
-  useEffect(() => {
-    const handleDragEnter = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragging(true);
-    };
+  const isDragging = useDragAndDrop();
 
-    const handleDragLeave = (e: DragEvent) => {
-      e.preventDefault();
-      if (e.target === document.body) {
-        setIsDragging(false);
-      }
-    };
-
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-    };
-
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-    };
-
-    const handlePaste = (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items;
-      if (!items) {
-        return;
-      }
-
-      for (const item of items) {
-        if (item.type === "text/plain") {
-          item.getAsString((text) => {
-            if (isSvgContent(text)) {
-              setOriginalSvg(text, "pasted.svg");
-              navigate({ to: "/{-$locale}/optimize" });
-            } else {
-              const extracted = extractSvgFromBase64(text);
-              if (extracted) {
-                setOriginalSvg(extracted, "pasted.svg");
-                navigate({ to: "/{-$locale}/optimize" });
-              } else {
-                toast.error(messages.invalidSvgContent);
-              }
-            }
-          });
-        }
-      }
-    };
-
-    document.addEventListener("dragenter", handleDragEnter);
-    document.addEventListener("dragleave", handleDragLeave);
-    document.addEventListener("dragover", handleDragOver);
-    document.addEventListener("drop", handleDrop);
-    document.addEventListener("paste", handlePaste);
-
-    return () => {
-      document.removeEventListener("dragenter", handleDragEnter);
-      document.removeEventListener("dragleave", handleDragLeave);
-      document.removeEventListener("dragover", handleDragOver);
-      document.removeEventListener("drop", handleDrop);
-      document.removeEventListener("paste", handlePaste);
-    };
-  }, [setOriginalSvg, navigate, messages.invalidSvgContent]);
+  usePasteHandler({
+    setOriginalSvg,
+    onSuccess: () => {
+      navigate({ to: "/{-$locale}/optimize" });
+    },
+    errorMessage: messages.invalidSvgContent,
+  });
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 md:py-12">
