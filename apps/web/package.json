@@ -63,6 +63,7 @@
     "@types/react": "~19.1.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^5.0.4",
+    "babel-plugin-react-compiler": "^1.0.0",
     "intlayer-cli": "^6.1.6",
     "jsdom": "^26.0.0",
     "monaco-editor": "^0.54.0",

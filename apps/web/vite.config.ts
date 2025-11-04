@@ -30,7 +30,11 @@ export default defineConfig(({ mode }) => ({
         },
       },
     }),
-    viteReact(),
+    viteReact({
+      babel: {
+        plugins: ["babel-plugin-react-compiler"],
+      },
+    }),
     tailwindcss(),
     mode === "production" &&
       cloudflare({
