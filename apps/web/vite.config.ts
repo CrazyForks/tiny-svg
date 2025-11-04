@@ -2,6 +2,7 @@ import contentCollections from "@content-collections/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { Locales } from "intlayer";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 import { intlayer, intlayerMiddleware } from "vite-intlayer";
@@ -48,10 +49,15 @@ export default defineConfig(({ mode }) => ({
         },
       },
       pages: [
-        {
-          path: "/about",
+        ...[
+          Locales.ENGLISH,
+          Locales.CHINESE,
+          Locales.KOREAN,
+          Locales.GERMAN,
+        ].map((locale) => ({
+          path: `/${locale}/blog`,
           prerender: { enabled: true },
-        },
+        })),
       ],
     }),
     nitro(),
