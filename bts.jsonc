@@ -1,6 +1,5 @@
 // Better-T-Stack configuration file
 // safe to delete
-
 {
   "$schema": "https://r2.better-t-stack.dev/schema.json",
   "version": "3.2.1",
@@ -20,6 +19,6 @@
   "packageManager": "pnpm",
   "dbSetup": "none",
   "api": "none",
-  "webDeploy": "wrangler",
+  "webDeploy": "none",
   "serverDeploy": "none"
 }

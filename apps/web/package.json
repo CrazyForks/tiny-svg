@@ -6,9 +6,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "dev": "vite dev --port=3001",
-    "deploy": "pnpm run build && wrangler deploy",
-    "blog:build": "content-collections build",
-    "cf-typegen": "wrangler types --env-interface Env"
+    "deploy": "vercel --prod",
+    "blog:build": "content-collections build"
   },
   "dependencies": {
     "@egoist/tailwindcss-icons": "^1.9.0",
@@ -32,6 +31,7 @@
     "intlayer": "^6.1.6",
     "localforage": "^1.10.0",
     "lucide-react": "^0.525.0",
+    "nitro": "3.0.1-alpha.0",
     "prettier": "^3.6.2",
     "radix-ui": "^1.4.2",
     "react": "19.1.0",
@@ -49,7 +49,6 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.13.8",
     "@content-collections/cli": "^0.1.7",
     "@content-collections/core": "^0.11.1",
     "@content-collections/mdx": "^0.2.2",
@@ -74,7 +73,6 @@
     "typescript": "^5.7.2",
     "vite": "^7.0.2",
     "vite-intlayer": "^6.1.6",
-    "web-vitals": "^5.0.3",
-    "wrangler": "^4.40.3"
+    "web-vitals": "^5.0.3"
   }
 }

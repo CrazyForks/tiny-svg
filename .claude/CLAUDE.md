@@ -13,7 +13,7 @@ Tiny SVG is a modern, lightning-fast SVG optimizer and code generator built with
 - **Internationalization**: Intlayer (EN, ZH, KO, DE)
 - **State Management**: Zustand
 - **Build Tool**: Vite 7
-- **Deployment**: Cloudflare Workers
+- **Deployment**: Vercel
 
 ## Key Principles
 - Zero configuration required
@@ -344,7 +344,7 @@ Tiny SVG is a modern, lightning-fast SVG optimizer and code generator built with
 - `pnpm dev:web` - Start only the web app
 - `pnpm build` - Build all workspace packages
 - `pnpm --filter web build` - Build only the web app
-- `pnpm --filter web deploy` - Build and deploy to Cloudflare Workers
+- `pnpm --filter web deploy` - Deploy to Vercel
 - `pnpm check` - Run Biome linter and formatter
 - `pnpm check-types` - Run TypeScript type checking
 - `npx ultracite init` - Initialize Ultracite in your project

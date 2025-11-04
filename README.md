@@ -6,12 +6,11 @@
 
 **A modern, lightning-fast SVG optimizer and code generator**
 
-[![Demo](https://img.shields.io/badge/demo-live-success)](https://tiny-svg.actnow.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![TanStack Start](https://img.shields.io/badge/TanStack_Start-SSR-orange.svg)](https://tanstack.com/start)
 
-[Live Demo](https://tiny-svg.actnow.dev) · [Features](#features) · [Quick Start](#quick-start) · [Documentation](#documentation)
+[Features](#features) · [Quick Start](#quick-start) · [Documentation](#documentation)
 
 </div>
 
@@ -146,8 +145,7 @@ pnpm check-types
 
 ### Build & Deploy
 - **[Vite 7](https://vite.dev/)** - Next-generation build tool
-- **[Cloudflare Workers](https://workers.cloudflare.com/)** - Serverless deployment platform
-- **[Wrangler](https://developers.cloudflare.com/workers/wrangler/)** - CLI for Cloudflare Workers
+- **[Vercel](https://vercel.com/)** - Deployment platform
 
 ---
 
@@ -302,96 +300,65 @@ export default defineConfig({
 
 ## 🚀 Deployment
 
-### Cloudflare Workers (Recommended)
+### Vercel (Recommended)
 
-This project is optimized for Cloudflare Workers deployment with full SSR support.
+This project is configured for Vercel deployment with full SSR support.
 
 #### Prerequisites
 
-1. **Cloudflare Account**: Sign up at [cloudflare.com](https://cloudflare.com)
-2. **Wrangler CLI**: Already included in dependencies
+1. **Vercel Account**: Sign up at [vercel.com](https://vercel.com)
+2. **Vercel CLI** (optional): `npm i -g vercel`
 
-#### Setup
+#### Quick Deploy
 
-1. **Login to Cloudflare**:
-```bash
-pnpm wrangler login
-```
+The easiest way to deploy is to connect your GitHub repository to Vercel:
 
-2. **Configure `wrangler.toml`** (already configured):
-```toml
-name = "tiny-svg"
-compatibility_date = "2024-01-01"
-main = ".output/server/index.mjs"
-assets = { directory = ".output/client" }
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new)
+3. Import your repository
+4. Vercel will auto-detect the settings and deploy
 
-[observability]
-enabled = true
-
-# Optional: Custom domain
-# routes = [
-#   { pattern = "tiny-svg.actnow.dev", custom_domain = true }
-# ]
-```
-
-3. **Deploy**:
-```bash
-# Deploy the web app (builds and deploys automatically)
-pnpm --filter web deploy
-```
-
-Your app will be deployed to: `https://tiny-svg.workers.dev`
-
-#### Custom Domain
-
-To use a custom domain:
-
-1. Add your domain to Cloudflare
-2. Update `wrangler.toml`:
-```toml
-routes = [
-  { pattern = "your-domain.com", custom_domain = true }
-]
-```
-3. Deploy: `pnpm deploy`
-
-#### Environment Variables
-
-Set environment variables using Wrangler:
-
-```bash
-# Set a variable
-pnpm wrangler secret put VARIABLE_NAME
-
-# List all variables
-pnpm wrangler secret list
-```
-
-Or use `.dev.vars` for local development:
-
-```bash
-# apps/web/.dev.vars
-VARIABLE_NAME=value
-```
-
-#### Deployment Best Practices
-
-- **Build locally first**: Run `pnpm --filter web build` to catch errors before deploying
-- **Test with preview**: Use `pnpm --filter web serve` to test the production build locally
-- **Check bundle size**: Monitor `apps/web/.output/client/assets/` to ensure bundles are optimized
-- **Monitor logs**: Use `pnpm --filter web wrangler tail` to view real-time logs
-
-### Other Platforms
-
-#### Vercel
+#### Deploy via CLI
 
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
-# Deploy
-vercel
+# Deploy to production
+vercel --prod
+
+# Or use the npm script
+cd apps/web
+pnpm deploy
 ```
+
+#### Environment Variables
+
+Set environment variables in your Vercel project settings or via CLI:
+
+```bash
+# Set a variable
+vercel env add VARIABLE_NAME
+
+# Pull environment variables for local development
+vercel env pull
+```
+
+#### Custom Domain
+
+1. Go to your project settings in Vercel
+2. Navigate to "Domains"
+3. Add your custom domain
+4. Vercel will automatically configure DNS
+
+#### Deployment Best Practices
+
+- **Build locally first**: Run `pnpm --filter web build` to catch errors before deploying
+- **Test with preview**: Use `pnpm --filter web serve` to test the production build locally
+- **Check bundle size**: Monitor `apps/web/.output/public/assets/` to ensure bundles are optimized
+- **Preview deployments**: Every push to a branch creates a preview deployment
+
+### Other Platforms
 
 #### Netlify
 
@@ -419,8 +386,8 @@ After running `pnpm build`, the output structure is:
 
 ```
 apps/web/.output/
-├── client/               # Static assets
-│   ├── assets/          # JS/CSS bundles
+├── public/              # Static assets (served by Vercel)
+│   ├── assets/         # JS/CSS bundles
 │   │   ├── index-*.js   # Main bundle (~15.79 KB)
 │   │   ├── monaco-*.js  # Monaco Editor (~500 KB)
 │   │   ├── prettier-*.js # Prettier (~200 KB)
@@ -480,20 +447,19 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 - **[SVGO](https://github.com/svg/svgo)** - The powerful SVG optimizer
 - **[TanStack](https://tanstack.com/)** - Amazing React ecosystem
-- **[Cloudflare](https://www.cloudflare.com/)** - Serverless infrastructure
+- **[Vercel](https://vercel.com/)** - Deployment platform
 - **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful UI components
 - **[Better T Stack](https://better-t-stack.dev/)** - Better Start Template
 - **All contributors** who have helped improve this project
 
 ## Code Template
 
-- start with same template [tiny-svg start template](https://better-t-stack.dev/stack?name=my-better-t-app&fe-w=tanstack-start&fe-n=none&rt=none&be=none&api=none&db=none&orm=none&dbs=none&au=none&pay=none&pm=pnpm&add=biome%2Cultracite&ex=&git=true&i=true&wd=wrangler&sd=none&yolo=false)
+- start with same template [tiny-svg start template](https://better-t-stack.dev/stack?name=my-better-t-app&fe-w=tanstack-start&fe-n=none&rt=none&be=none&api=none&db=none&orm=none&dbs=none&au=none&pay=none&pm=pnpm&add=biome%2Cultracite&ex=&git=true&i=true&wd=none&sd=vercel&yolo=false)
 
 ---
 
 ## 📞 Support
 
-- **Live Demo**: [https://tiny-svg.actnow.dev](https://tiny-svg.actnow.dev)
 - **Issues**: [GitHub Issues](https://github.com/hehehai/tiny-svg/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/hehehai/tiny-svg/discussions)
 
