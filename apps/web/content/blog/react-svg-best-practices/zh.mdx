@@ -1,0 +1,291 @@
+---
+title: "React SVG 最佳实践：所有实现方法完整指南"
+desc: 在 React 中使用 SVG 的综合指南 - 比较所有方法，包括 img 标签、内联 SVG、SVGR、图标库和动态导入，附带优缺点和实际示例
+cover: https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop
+datetime: 2025-10-20
+---
+
+# React SVG 最佳实践：所有实现方法完整指南
+
+SVG 对于现代 React 应用至关重要，但有多种实现方式 - 每种都有不同的权衡。本综合指南将探索所有方法，比较它们的性能，并提供实际示例帮助您选择最佳方法。
+
+## React 中使用 SVG 的 5 种方法
+
+### 方法 1: `<img>` 标签
+
+**实现**:
+```tsx
+import logoUrl from './logo.svg'
+
+function Logo() {
+  return <img src={logoUrl} alt="公司徽标" className="w-48 h-12" />
+}
+```
+
+**优点**:
+- ✅ 最简单的方法
+- ✅ 浏览器缓存
+- ✅ 懒加载支持
+- ✅ 不增加包体积
+
+**缺点**:
+- ❌ 无法使用 CSS 样式
+- ❌ 无法使用 JavaScript 控制
+- ❌ 额外的 HTTP 请求
+
+**适用场景**: 静态徽标、大型插图、装饰性图像
+
+---
+
+### 方法 2: 内联 SVG
+
+**实现**:
+```tsx
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+      <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69..." />
+    </svg>
+  )
+}
+```
+
+**优点**:
+- ✅ 完全的 CSS 控制
+- ✅ JavaScript 操作
+- ✅ 主题支持（currentColor）
+- ✅ 完整的无障碍访问
+
+**缺点**:
+- ❌ 增加包体积
+- ❌ 代码冗长
+- ❌ 难以维护
+
+**适用场景**: 小图标（< 1 KB）、动画 SVG、交互式 SVG
+
+---
+
+### 方法 3: SVGR（组件导入）
+
+**配置 vite.config.ts**:
+```typescript
+import svgr from 'vite-plugin-svgr'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    svgr({
+      svgrOptions: {
+        icon: true,
+        typescript: true,
+      },
+    }),
+  ],
+})
+```
+
+**使用**:
+```tsx
+import { ReactComponent as Logo } from './logo.svg'
+
+function Header() {
+  return <Logo className="w-32 h-8 text-blue-600" />
+}
+```
+
+**优点**:
+- ✅ 两全其美 - 文件分离 + 完全控制
+- ✅ 自动优化
+- ✅ TypeScript 支持
+- ✅ Props 支持
+
+**缺点**:
+- ❌ 需要构建配置
+- ❌ 增加包体积
+
+**适用场景**: 可重用组件、TypeScript 项目、设计系统
+
+---
+
+### 方法 4: 图标组件库
+
+**流行的库**:
+```bash
+npm install @heroicons/react
+npm install lucide-react
+npm install @phosphor-icons/react
+```
+
+**Heroicons 示例**:
+```tsx
+import { HomeIcon } from '@heroicons/react/24/outline'
+
+function Navigation() {
+  return <HomeIcon className="w-6 h-6 text-gray-600" />
+}
+```
+
+**Lucide 示例**:
+```tsx
+import { Heart, Star } from 'lucide-react'
+
+function ProductCard() {
+  return (
+    <div>
+      <Heart size={24} color="red" fill="pink" />
+      <Star size={20} fill="gold" />
+    </div>
+  )
+}
+```
+
+**优点**:
+- ✅ 零配置
+- ✅ 一致的设计
+- ✅ TypeScript 支持
+- ✅ Tree shaking
+
+**缺点**:
+- ❌ 增加包体积
+- ❌ 外部依赖
+- ❌ 有限的自定义
+
+**适用场景**: 快速原型、一致的设计系统、常见 UI 模式
+
+---
+
+### 方法 5: 动态 SVG 加载
+
+**实现**:
+```tsx
+function DynamicSVG({ name }: { name: string }) {
+  const [svg, setSvg] = useState<string>('')
+  
+  useEffect(() => {
+    import(`./icons/${name}.svg?raw`)
+      .then(module => setSvg(module.default))
+  }, [name])
+  
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />
+}
+```
+
+**优点**:
+- ✅ 按需加载
+- ✅ 减少初始包体积
+- ✅ 动态内容
+
+**缺点**:
+- ❌ 复杂性高
+- ❌ 类型安全困难
+- ❌ XSS 风险
+
+**适用场景**: CMS 驱动内容、插件系统、非常大的图标集
+
+---
+
+## 比较表
+
+| 方法 | 包体积 | 样式 | TypeScript | 缓存 | 设置 | 最适合 |
+|------|--------|------|-----------|------|------|--------|
+| `<img>` | ✅ 无 | ❌ 否 | ⚠️ 有限 | ✅ 是 | ✅ 简单 | 静态徽标 |
+| 内联 SVG | ❌ 增加 | ✅ 完全 | ✅ 是 | ❌ 否 | ✅ 简单 | 小图标 |
+| SVGR | ❌ 增加 | ✅ 完全 | ✅ 完全 | ❌ 否 | ⚠️ 需配置 | 组件 |
+| 图标库 | ⚠️ 每个图标 | ✅ 好 | ✅ 完全 | ❌ 否 | ✅ 简单 | 快速开发 |
+| 动态加载 | ✅ 最小 | ⚠️ 有限 | ❌ 困难 | ✅ 自定义 | ❌ 复杂 | CMS 内容 |
+
+## 使用场景推荐
+
+### 小型项目 / 落地页
+**使用**: 图标库（Heroicons 或 Lucide）
+
+### 设计系统 / 组件库
+**使用**: SVGR 用于自定义图标
+
+### 大型应用
+**使用**: 组合方式
+- 图标: 图标库
+- 徽标: `<img>` 标签
+- 自定义插图: SVGR
+
+### 性能关键应用
+**使用**: `<img>` 标签 + 懒加载
+
+## 性能优化技巧
+
+### 1. 懒加载图标
+```tsx
+const DashboardIcons = lazy(() => import('./icons/dashboard'))
+```
+
+### 2. 使用 SVG 精灵图
+```tsx
+<svg className="w-6 h-6">
+  <use href="/sprite.svg#home" />
+</svg>
+```
+
+### 3. 优化 SVG 文件
+```bash
+npx svgo icon.svg -o icon.optimized.svg
+```
+
+### 4. Tree Shaking
+```tsx
+// ✅ 好: 命名导入
+import { HomeIcon } from '@heroicons/react/24/outline'
+
+// ❌ 坏: 命名空间导入
+import * as Icons from '@heroicons/react/24/outline'
+```
+
+## 无障碍访问最佳实践
+
+### 装饰性图标
+```tsx
+<button>
+  <HomeIcon aria-hidden="true" className="w-5 h-5" />
+  <span>主页</span>
+</button>
+```
+
+### 独立图标
+```tsx
+<button aria-label="转到主页">
+  <HomeIcon className="w-6 h-6" />
+</button>
+```
+
+## 快速决策指南
+
+**选择 `<img>` 如果**:
+- ✅ 大型 SVG 文件（> 10 KB）
+- ✅ 不需要颜色/样式更改
+- ✅ 静态徽标或插图
+
+**选择内联 SVG 如果**:
+- ✅ 非常小的图标（< 500 字节）
+- ✅ 需要 CSS 动画
+- ✅ 一次性自定义图标
+
+**选择 SVGR 如果**:
+- ✅ 构建设计系统
+- ✅ 需要 TypeScript 支持
+- ✅ 可重用的自定义图标
+
+**选择图标库如果**:
+- ✅ 快速开发
+- ✅ 标准 UI 图标
+- ✅ 不想管理图标
+
+## 最终推荐
+
+对于 2025 年的大多数现代 React 应用：
+
+1. **图标库**（Heroicons/Lucide）用于标准 UI 图标
+2. **SVGR** 用于自定义品牌图标和插图
+3. **`<img>` 标签**用于大型装饰性 SVG
+
+这种组合提供了开发体验、性能和灵活性的最佳平衡。
+
+祝编码愉快！

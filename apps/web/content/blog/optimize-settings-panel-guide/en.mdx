@@ -1,0 +1,561 @@
+---
+title: Mastering Tiny SVG's Optimize Settings Panel
+desc: A comprehensive guide to all optimization settings and features in Tiny SVG's configuration panel
+cover: https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop
+datetime: 2025-11-17
+---
+
+# Mastering Tiny SVG's Optimize Settings Panel
+
+Tiny SVG's Optimize Settings Panel gives you complete control over how your SVG files are optimized. In this comprehensive guide, we'll explore every setting and feature to help you get the most out of your SVG optimization workflow.
+
+## Understanding the Settings Panel
+
+The settings panel is divided into three main sections:
+
+1. **Global Settings** - Control overall optimization behavior
+2. **Features** - Toggle 45+ individual SVGO plugins
+3. **Export Options** - Configure PNG/JPEG export dimensions
+
+Let's dive deep into each section.
+
+## Global Settings
+
+### Show Original
+
+**Purpose**: Display both original and optimized SVG side-by-side
+
+**When to use**:
+- Comparing visual differences before/after optimization
+- Verifying that optimization doesn't break your SVG
+- Quality assurance during batch processing
+
+```typescript
+// When enabled, you'll see:
+// Original: 12.5 KB | Optimized: 4.2 KB (-66.4%)
+```
+
+**Tip**: The panel auto-switches to the "optimized" tab when compression completes, but you can toggle this setting to keep both views visible.
+
+### Compare Gzipped
+
+**Purpose**: Show gzip-compressed sizes instead of raw file sizes
+
+**Why it matters**: Web servers typically serve files with gzip compression, so this gives you a more accurate picture of real-world file sizes.
+
+```typescript
+// Without gzip:
+Original: 12.5 KB → Optimized: 4.2 KB
+
+// With gzip enabled:
+Original: 3.8 KB → Optimized: 1.9 KB
+```
+
+**Best practice**: Always check gzipped sizes for production deployments, as they better represent actual transfer sizes over HTTP.
+
+### Prettify Markup
+
+**Purpose**: Format the optimized SVG code with proper indentation
+
+**Trade-off**:
+- ✅ **Enabled**: More readable, easier to debug (+5-10% file size)
+- ❌ **Disabled**: Minified, smaller file size, harder to read
+
+```xml
+<!-- Prettified -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+</svg>
+
+<!-- Minified -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg>
+```
+
+**Recommendation**: Enable for development/debugging, disable for production builds.
+
+### Multipass
+
+**Purpose**: Run the optimization process multiple times until no further improvements are possible
+
+**How it works**: Some optimizations can enable other optimizations. For example, removing empty groups might make parent groups collapsible.
+
+```typescript
+// Single pass: 12.5 KB → 5.1 KB (-59.2%)
+// Multipass:   12.5 KB → 4.2 KB (-66.4%)
+```
+
+**Performance note**: Multipass can take 2-3x longer for complex SVGs, but the file size savings are usually worth it.
+
+**Best practice**: Keep this enabled unless you're optimizing hundreds of files and need faster processing.
+
+### Number Precision
+
+**Purpose**: Control decimal precision for numeric values (0-10)
+
+**Default**: 2
+
+**Examples**:
+```xml
+<!-- Precision: 0 -->
+<circle cx="12" cy="12" r="5"/>
+
+<!-- Precision: 2 (default) -->
+<circle cx="12.35" cy="12.47" r="5.18"/>
+
+<!-- Precision: 5 -->
+<circle cx="12.34567" cy="12.47234" r="5.18392"/>
+```
+
+**Trade-offs**:
+- **Lower precision (0-1)**: Smaller files, potential visual differences in complex paths
+- **Medium precision (2-3)**: Balanced, suitable for most icons and illustrations
+- **Higher precision (4-10)**: Larger files, preserves intricate details
+
+**Recommendation**: Use 2 for icons, 3-4 for detailed illustrations, 5+ for technical diagrams.
+
+### Transform Precision
+
+**Purpose**: Control decimal precision for transform operations (rotate, scale, translate)
+
+**Default**: 4
+
+**Why separate from number precision?**: Transforms are more sensitive to rounding errors. A small error in a rotation angle can cause visible distortions.
+
+```xml
+<!-- Transform Precision: 2 -->
+<g transform="translate(12.35, 8.47) rotate(45.12)">
+
+<!-- Transform Precision: 4 (default) -->
+<g transform="translate(12.3456, 8.4712) rotate(45.1234)">
+```
+
+**Recommendation**: Keep at 4 unless you have very simple transforms (then use 2) or need sub-pixel accuracy (use 5-6).
+
+## Feature Toggles (SVGO Plugins)
+
+Tiny SVG provides access to 45+ SVGO plugins. Here are the most important ones:
+
+### Essential Plugins (Usually Enabled)
+
+#### removeDoctype
+Removes `<!DOCTYPE>` declarations which browsers don't need for inline SVGs.
+
+```xml
+<!-- Before -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "...">
+<svg>...</svg>
+
+<!-- After -->
+<svg>...</svg>
+```
+
+**Savings**: ~100-200 bytes
+
+#### removeComments
+Removes all XML comments.
+
+```xml
+<!-- Before -->
+<!-- Created with Figma -->
+<!-- Icon: Home -->
+<svg>...</svg>
+
+<!-- After -->
+<svg>...</svg>
+```
+
+**When to disable**: If you need to preserve attribution comments or conditional comments.
+
+#### removeMetadata
+Removes `<metadata>` tags containing editor information.
+
+```xml
+<!-- Before -->
+<svg>
+  <metadata>
+    <rdf:RDF>...</rdf:RDF>
+  </metadata>
+  <path d="..."/>
+</svg>
+
+<!-- After -->
+<svg>
+  <path d="..."/>
+</svg>
+```
+
+**Savings**: Can remove kilobytes from files exported from Adobe Illustrator.
+
+#### cleanupIds
+Removes or minifies unused IDs and references.
+
+```xml
+<!-- Before -->
+<defs>
+  <linearGradient id="gradient-unused-1234567890">
+  <linearGradient id="gradient-used-9876543210">
+</defs>
+<rect fill="url(#gradient-used-9876543210)"/>
+
+<!-- After -->
+<defs>
+  <linearGradient id="a">
+</defs>
+<rect fill="url(#a)"/>
+```
+
+**When to disable**: If you're embedding multiple SVGs in one HTML page and need to prevent ID conflicts.
+
+#### convertPathData
+Optimizes path commands and coordinates.
+
+```xml
+<!-- Before -->
+<path d="M 10.000 10.000 L 20.000 10.000 L 20.000 20.000 Z"/>
+
+<!-- After -->
+<path d="M10 10h10v10z"/>
+```
+
+**Savings**: 30-50% path data reduction in typical cases.
+
+**When to disable**: Never (unless you're debugging path issues).
+
+### Situational Plugins
+
+#### removeViewBox
+Removes the `viewBox` attribute.
+
+```xml
+<!-- Before -->
+<svg width="24" height="24" viewBox="0 0 24 24">
+
+<!-- After -->
+<svg width="24" height="24">
+```
+
+**⚠️ WARNING**: Almost always keep this **disabled**. The `viewBox` is critical for responsive SVGs.
+
+**Only enable if**:
+- You have explicit `width` and `height` attributes
+- The SVG will never be scaled
+- You're using the SVG at a fixed size
+
+#### removeDimensions
+Removes `width` and `height` attributes while preserving `viewBox`.
+
+```xml
+<!-- Before -->
+<svg width="24" height="24" viewBox="0 0 24 24">
+
+<!-- After -->
+<svg viewBox="0 0 24 24">
+```
+
+**Benefits**: Makes SVGs responsive by default (they'll scale to parent container).
+
+**When to disable**: If you need fixed-size SVGs or are using SVG sprites.
+
+#### convertShapeToPath
+Converts basic shapes (`<circle>`, `<rect>`, `<polygon>`) to `<path>` elements.
+
+```xml
+<!-- Before -->
+<circle cx="12" cy="12" r="10"/>
+
+<!-- After -->
+<path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"/>
+```
+
+**Trade-offs**:
+- ✅ Can enable further path optimizations
+- ✅ Slightly smaller file size in some cases
+- ❌ Less readable code
+- ❌ Harder to edit manually
+
+**Recommendation**: Enable for production, disable for development.
+
+#### removeTitle / removeDesc
+Removes `<title>` and `<desc>` elements.
+
+```xml
+<!-- Before -->
+<svg>
+  <title>Home Icon</title>
+  <desc>A house-shaped icon representing home</desc>
+  <path d="..."/>
+</svg>
+
+<!-- After -->
+<svg>
+  <path d="..."/>
+</svg>
+```
+
+**⚠️ ACCESSIBILITY WARNING**: These elements provide accessibility benefits for screen readers.
+
+**Best practice**:
+- Keep **disabled** for standalone SVGs
+- Can **enable** if you're using `aria-label` or `aria-labelledby` on the `<svg>` element
+- Always **enable** for decorative icons (with `aria-hidden="true"`)
+
+### Advanced Plugins
+
+#### collapseGroups
+Merges unnecessary group (`<g>`) elements.
+
+```xml
+<!-- Before -->
+<g>
+  <g>
+    <g>
+      <path d="..."/>
+    </g>
+  </g>
+</g>
+
+<!-- After -->
+<path d="..."/>
+```
+
+**Savings**: Reduces DOM depth and file size.
+
+#### mergePaths
+Combines multiple paths into one when possible.
+
+```xml
+<!-- Before -->
+<path d="M10 10h5"/>
+<path d="M15 10h5"/>
+
+<!-- After -->
+<path d="M10 10h10"/>
+```
+
+**When to disable**: If you need to animate individual paths separately.
+
+#### inlineStyles
+Moves CSS from `<style>` blocks to inline attributes.
+
+```xml
+<!-- Before -->
+<style>.a{fill:red}</style>
+<rect class="a"/>
+
+<!-- After -->
+<rect fill="red"/>
+```
+
+**Benefits**: Better compatibility, no CSS specificity issues.
+
+**When to disable**: If you're using CSS animations or want to theme SVGs with external stylesheets.
+
+## Export Options
+
+### Scale Presets
+
+Tiny SVG offers convenient scale presets for PNG/JPEG export:
+
+- **0.25x** - Thumbnail/preview images
+- **0.5x** - Low-resolution displays
+- **1x** - Original size
+- **2x** - Retina displays (most common)
+- **3x** - High-DPI Android devices
+- **4x-8x** - Print quality or ultra-high-resolution displays
+
+**Example workflow**:
+```typescript
+// Original SVG: 24×24
+// 2x export: 48×48 PNG (for Retina displays)
+// 3x export: 72×72 PNG (for high-DPI Android)
+```
+
+### Custom Dimensions
+
+You can also enter custom width and height values:
+
+- **Aspect ratio is locked by default** - changing width automatically adjusts height
+- **Useful for**:
+  - Social media images (1200×630 for Open Graph)
+  - Specific design requirements
+  - Creating multiple export sizes
+
+### PNG vs JPEG
+
+**PNG Export**:
+- Lossless compression
+- Supports transparency
+- Best for: Icons, logos, illustrations with transparency
+- Typical size: Larger than JPEG
+
+**JPEG Export**:
+- Lossy compression (95% quality default)
+- No transparency (white background)
+- Best for: Complex illustrations without transparency
+- Typical size: 40-60% smaller than PNG
+
+```typescript
+// Same 512×512 export:
+PNG: 87 KB
+JPEG: 34 KB (-61%)
+```
+
+## Practical Workflows
+
+### Workflow 1: Icon Optimization
+
+```typescript
+Settings:
+✅ Show Original: false
+✅ Compare Gzipped: true
+✅ Prettify Markup: false (production)
+✅ Multipass: true
+📊 Number Precision: 2
+📊 Transform Precision: 4
+
+Plugins:
+✅ removeComments
+✅ removeMetadata
+✅ cleanupIds
+✅ removeDimensions (makes responsive)
+❌ removeViewBox (KEEP viewBox!)
+❌ removeTitle (accessibility)
+✅ convertPathData
+✅ collapseGroups
+✅ mergePaths
+```
+
+**Result**: 60-70% file size reduction, perfect visual quality, accessibility maintained.
+
+### Workflow 2: Illustration Optimization
+
+```typescript
+Settings:
+✅ Show Original: true (QA check)
+✅ Compare Gzipped: true
+✅ Prettify Markup: true (easier to edit)
+✅ Multipass: true
+📊 Number Precision: 3 (more detail)
+📊 Transform Precision: 5
+
+Plugins:
+✅ removeComments
+✅ removeMetadata
+✅ cleanupIds
+❌ convertShapeToPath (keep readable)
+❌ removeDimensions (explicit size)
+❌ removeViewBox
+✅ removeTitle (if using aria-label)
+✅ convertPathData
+✅ collapseGroups
+❌ mergePaths (preserve layers)
+```
+
+**Result**: 40-50% reduction, preserves editability, maintains visual fidelity.
+
+### Workflow 3: Maximum Compression
+
+```typescript
+Settings:
+✅ Show Original: false
+✅ Compare Gzipped: true
+✅ Prettify Markup: false
+✅ Multipass: true
+📊 Number Precision: 1
+📊 Transform Precision: 2
+
+Plugins:
+✅ Enable ALL optimization plugins
+✅ removeTitle
+✅ removeDesc
+✅ convertShapeToPath
+✅ removeDimensions
+✅ All cleanup and minification plugins
+```
+
+**Result**: 70-80% reduction, may have minor visual differences, not accessible, hard to edit.
+
+**Use case**: Large icon sets, decorative elements, maximum performance scenarios.
+
+## Pro Tips
+
+### 1. Reset to Defaults
+If you've experimented with settings and want to start fresh, click the **Reset All** button in the Features section.
+
+### 2. Persistent Settings
+All your settings are saved to localStorage and persist across sessions. You don't need to reconfigure every time.
+
+### 3. Batch Processing Strategy
+When optimizing multiple SVGs:
+1. Configure settings once
+2. Upload and optimize each file
+3. Settings remain constant
+4. Download all optimized files
+
+### 4. Quick Quality Check
+Enable "Show Original" temporarily to verify:
+- No visual artifacts
+- Colors remain accurate
+- Gradients render correctly
+- Text is readable (if not converted to paths)
+
+### 5. Export Dimensions for Design Systems
+Create a consistent export strategy:
+```typescript
+Icons: 1x (24×24), 2x (48×48), 3x (72×72)
+Illustrations: 1x (original), 2x (Retina)
+Social: Custom (1200×630 for OG images)
+```
+
+## Common Issues and Solutions
+
+### Issue: SVG looks different after optimization
+
+**Solution**:
+- Increase number precision (try 3 or 4)
+- Increase transform precision (try 5 or 6)
+- Disable `convertShapeToPath`
+- Disable `mergePaths`
+- Enable "Show Original" to identify the problematic plugin
+
+### Issue: SVG won't scale responsively
+
+**Solution**:
+- Ensure `removeViewBox` is **disabled**
+- Enable `removeDimensions` (removes fixed width/height)
+- Check that viewBox values are correct (not "0 0 0 0")
+
+### Issue: Text disappears or changes font
+
+**Solution**:
+- Convert text to outlines in your design tool before exporting
+- Or disable `removeTitle`, `removeDesc`, and check `cleanupIds`
+
+### Issue: Gradients or filters broken
+
+**Solution**:
+- Disable `cleanupIds` (might be renaming references)
+- Disable `removeUselessDefs`
+- Check that gradient/filter definitions aren't being removed
+
+### Issue: File size barely decreased
+
+**Possible reasons**:
+- SVG was already optimized
+- Disable `prettifyMarkup` for smaller output
+- Enable `multipass` for deeper optimization
+- Lower number/transform precision
+- Enable more aggressive plugins like `convertShapeToPath`
+
+## Conclusion
+
+Tiny SVG's Optimize Settings Panel gives you granular control over every aspect of SVG optimization. By understanding each setting and plugin, you can:
+
+- **Optimize for file size** without sacrificing quality
+- **Maintain accessibility** by keeping semantic elements
+- **Preserve editability** for design iteration
+- **Export at any size** for different devices and use cases
+
+Start with the recommended defaults, then adjust based on your specific needs. The best settings are the ones that balance file size, visual quality, and your workflow requirements.
+
+Happy optimizing!

@@ -1,0 +1,117 @@
+---
+title: "React SVG 모범 사례: 모든 구현 방법 완전 가이드"
+desc: React에서 SVG 사용에 대한 종합 가이드 - img 태그, 인라인 SVG, SVGR, 아이콘 라이브러리 및 동적 가져오기를 포함한 모든 방법 비교
+cover: https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop
+datetime: 2025-10-20
+---
+
+# React SVG 모범 사례: 완전 가이드
+
+## React에서 SVG 사용하는 5가지 방법
+
+### 방법 1: `<img>` 태그
+
+```tsx
+import logoUrl from './logo.svg'
+function Logo() {
+  return <img src={logoUrl} alt="로고" className="w-48 h-12" />
+}
+```
+
+**장점**: ✅ 가장 간단 ✅ 브라우저 캐싱 ✅ 지연 로딩  
+**단점**: ❌ CSS 스타일 불가 ❌ JavaScript 제어 불가  
+**적합**: 정적 로고, 대형 일러스트
+
+### 방법 2: 인라인 SVG
+
+```tsx
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="..." />
+    </svg>
+  )
+}
+```
+
+**장점**: ✅ 완전한 CSS 제어 ✅ JavaScript 조작 ✅ 테마 지원  
+**단점**: ❌ 번들 크기 증가 ❌ 코드 장황함  
+**적합**: 작은 아이콘, 애니메이션 SVG
+
+### 방법 3: SVGR
+
+```typescript
+// vite.config.ts
+import svgr from 'vite-plugin-svgr'
+
+export default defineConfig({
+  plugins: [react(), svgr()],
+})
+```
+
+```tsx
+import { ReactComponent as Logo } from './logo.svg'
+<Logo className="w-32 h-8 text-blue-600" />
+```
+
+**장점**: ✅ 파일 분리 + 완전한 제어 ✅ TypeScript 지원  
+**단점**: ❌ 빌드 구성 필요  
+**적합**: 재사용 가능한 컴포넌트, 디자인 시스템
+
+### 방법 4: 아이콘 라이브러리
+
+```tsx
+import { HomeIcon } from '@heroicons/react/24/outline'
+import { Heart } from 'lucide-react'
+
+<HomeIcon className="w-6 h-6" />
+<Heart size={24} color="red" />
+```
+
+**장점**: ✅ 제로 구성 ✅ 일관된 디자인 ✅ Tree shaking  
+**단점**: ❌ 외부 의존성  
+**적합**: 빠른 개발, 표준 UI 아이콘
+
+### 방법 5: 동적 로딩
+
+```tsx
+function DynamicSVG({ name }) {
+  const [svg, setSvg] = useState('')
+  useEffect(() => {
+    import(`./icons/${name}.svg?raw`).then(m => setSvg(m.default))
+  }, [name])
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />
+}
+```
+
+**적합**: CMS 콘텐츠, 플러그인 시스템
+
+## 비교표
+
+| 방법 | 번들 크기 | 스타일링 | TypeScript | 최적 용도 |
+|------|----------|---------|-----------|----------|
+| `<img>` | ✅ 없음 | ❌ 없음 | ⚠️ 제한적 | 정적 로고 |
+| 인라인 | ❌ 증가 | ✅ 완전 | ✅ 예 | 작은 아이콘 |
+| SVGR | ❌ 증가 | ✅ 완전 | ✅ 완전 | 컴포넌트 |
+| 라이브러리 | ⚠️ 아이콘당 | ✅ 좋음 | ✅ 완전 | 빠른 개발 |
+
+## 성능 최적화
+
+```tsx
+// 1. 지연 로딩
+const Icons = lazy(() => import('./icons'))
+
+// 2. Tree shaking
+import { HomeIcon } from '@heroicons/react/24/outline' // ✅
+
+// 3. SVG 최적화
+npx svgo icon.svg -o icon.optimized.svg
+```
+
+## 최종 권장사항
+
+1. **아이콘 라이브러리** (Heroicons/Lucide) - 표준 UI 아이콘
+2. **SVGR** - 사용자 정의 브랜드 아이콘
+3. **`<img>` 태그** - 대형 장식용 SVG
+
+이 조합은 개발 경험, 성능 및 유연성의 최상의 균형을 제공합니다!

@@ -581,7 +581,6 @@ apps/web/.output/
 ### 🚧 In Progress
 
 - [ ] **PWA support** - Progressive Web App capabilities for offline usage
-- [ ] **Batch optimization** - Process multiple SVG files at once
 
 ### 📋 Planned Features
 

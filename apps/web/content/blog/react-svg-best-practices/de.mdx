@@ -1,0 +1,115 @@
+---
+title: "React SVG Best Practices: Vollständiger Leitfaden"
+desc: Umfassender Leitfaden zur Verwendung von SVG in React - Vergleich aller Methoden
+cover: https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop
+datetime: 2025-10-20
+---
+
+# React SVG Best Practices: Vollständiger Leitfaden
+
+## 5 Methoden zur Verwendung von SVG in React
+
+### Methode 1: `<img>`-Tag
+
+```tsx
+import logoUrl from './logo.svg'
+function Logo() {
+  return <img src={logoUrl} alt="Logo" className="w-48 h-12" />
+}
+```
+
+**Vorteile**: ✅ Einfachste Methode ✅ Browser-Caching  
+**Nachteile**: ❌ Kein CSS-Styling ❌ Keine JavaScript-Kontrolle  
+**Am besten für**: Statische Logos, große Illustrationen
+
+### Methode 2: Inline-SVG
+
+```tsx
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="..." />
+    </svg>
+  )
+}
+```
+
+**Vorteile**: ✅ Volle CSS-Kontrolle ✅ JavaScript-Manipulation  
+**Nachteile**: ❌ Bundle-Größe erhöht  
+**Am besten für**: Kleine Icons, Animationen
+
+### Methode 3: SVGR
+
+```typescript
+// vite.config.ts
+import svgr from 'vite-plugin-svgr'
+
+export default defineConfig({
+  plugins: [react(), svgr()],
+})
+```
+
+```tsx
+import { ReactComponent as Logo } from './logo.svg'
+<Logo className="w-32 h-8 text-blue-600" />
+```
+
+**Vorteile**: ✅ Dateitrennung + volle Kontrolle ✅ TypeScript-Unterstützung  
+**Am besten für**: Wiederverwendbare Komponenten, Design-Systeme
+
+### Methode 4: Icon-Bibliotheken
+
+```tsx
+import { HomeIcon } from '@heroicons/react/24/outline'
+import { Heart } from 'lucide-react'
+
+<HomeIcon className="w-6 h-6" />
+<Heart size={24} color="red" />
+```
+
+**Vorteile**: ✅ Null-Konfiguration ✅ Konsistentes Design  
+**Am besten für**: Schnelle Entwicklung, Standard-UI-Icons
+
+### Methode 5: Dynamisches Laden
+
+```tsx
+function DynamicSVG({ name }) {
+  const [svg, setSvg] = useState('')
+  useEffect(() => {
+    import(`./icons/${name}.svg?raw`).then(m => setSvg(m.default))
+  }, [name])
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />
+}
+```
+
+**Am besten für**: CMS-Inhalte, Plugin-Systeme
+
+## Vergleichstabelle
+
+| Methode | Bundle | Styling | TypeScript | Am besten für |
+|---------|--------|---------|-----------|---------------|
+| `<img>` | ✅ Keins | ❌ Nein | ⚠️ Begrenzt | Statisch |
+| Inline | ❌ Erhöht | ✅ Voll | ✅ Ja | Klein |
+| SVGR | ❌ Erhöht | ✅ Voll | ✅ Voll | Komponenten |
+| Bibliothek | ⚠️ Pro Icon | ✅ Gut | ✅ Voll | Schnell |
+
+## Leistungsoptimierung
+
+```tsx
+// 1. Lazy Loading
+const Icons = lazy(() => import('./icons'))
+
+// 2. Tree Shaking
+import { HomeIcon } from '@heroicons/react/24/outline' // ✅
+
+// 3. SVG-Optimierung
+npx svgo icon.svg -o icon.optimized.svg
+```
+
+## Endgültige Empfehlung
+
+1. **Icon-Bibliothek** (Heroicons/Lucide) - Standard-UI-Icons
+2. **SVGR** - Benutzerdefinierte Marken-Icons
+3. **`<img>`-Tag** - Große dekorative SVGs
+
+Diese Kombination bietet die beste Balance aus Entwicklererfahrung, Leistung und Flexibilität!
