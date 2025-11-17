@@ -24,7 +24,6 @@ const VIEWBOX_VALUES_COUNT = 4;
 const DEFAULT_SVG_DIMENSION = 100;
 const SCALE_MATCH_THRESHOLD = 0.01;
 const JPEG_QUALITY = 0.95;
-// biome-ignore lint/style/noMagicNumbers: These are configuration values for export scale presets
 const SCALE_OPTIONS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6, 7, 8] as const;
 
 type ConfigPanelProps = {
