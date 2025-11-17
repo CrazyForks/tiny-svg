@@ -24,13 +24,17 @@
 
 - **🚀 SVG Optimization**: Powered by SVGO with 40+ configurable plugins
 - **📦 Code Generation**: Generate React (JSX/TSX), Vue, Svelte, React Native, and Flutter code
+- **🎨 SVG Transformations**: Rotate, flip (horizontal/vertical), and resize with proportional scaling
+- **📊 Data URI Export**: Generate minified, base64, and URL-encoded Data URIs with size comparison
+- **🔍 Code Diff Viewer**: Side-by-side comparison with syntax highlighting (powered by Refractor)
 - **⚡ Web Workers**: Non-blocking optimization using multi-threaded processing
-- **🎨 Visual Preview**: Real-time preview with multiple background styles
+- **🎨 Visual Preview**: Real-time preview with zoom (20%-400%), pan, and 4 background styles
+- **📐 Export Dimensions**: Customizable PNG/JPEG export with scale presets (0.25x-8x) and custom dimensions
 - **💾 Persistent Settings**: Your preferences saved across sessions
 - **📱 Responsive Design**: Works seamlessly on desktop and mobile
 - **🌓 Dark Mode**: Full dark mode support
 - **🌍 Internationalization**: Multi-language support (EN, ZH, KO, DE)
-- **⚡ Lightning Fast**: Optimized bundle with lazy loading and code splitting
+- **⚡ Lightning Fast**: Optimized bundle with lazy loading and code splitting (main route only 15.79 KB)
 
 ---
 
@@ -164,12 +168,38 @@ pnpm check-types
 
 Generate optimized code for your favorite framework:
 
-- **React JSX** - JavaScript components
-- **React TSX** - TypeScript components with full type safety
-- **Vue** - Single File Components (.vue)
-- **Svelte** - Svelte components
-- **React Native** - react-native-svg components
-- **Flutter** - flutter_svg widgets
+- **React JSX** - JavaScript components with proper imports
+- **React TSX** - TypeScript components with full type safety and SVGProps
+- **Vue** - Single File Components (.vue) with template and script sections
+- **Svelte** - Svelte components with props spreading
+- **React Native** - react-native-svg components with automatic tag conversion
+- **Flutter** - flutter_svg widgets with SvgPicture.string
+
+**Features:**
+- Automatic component name generation from filename (kebab-case → PascalCase)
+- `currentColor` support for single-color SVGs (enables theming)
+- ViewBox preservation with fallback to "0 0 24 24"
+- Proper default dimensions (1em for scalability)
+- Framework-specific imports and type definitions
+
+### Data URI Export
+
+Convert optimized SVGs to three Data URI formats with size comparison:
+
+1. **Minified Data URI**: Optimized `encodeURIComponent` with smart character replacements
+   - Replaces %20 → space, %3D → =, %3A → :, %2F → /
+   - Smallest size for most SVGs
+2. **Base64 Data URI**: Standard Base64 encoding
+   - Prefix: `data:image/svg+xml;base64,`
+   - Better for binary-heavy SVGs
+3. **URL Encoded Data URI**: Full `encodeURIComponent` encoding
+   - Prefix: `data:image/svg+xml,`
+   - Most compatible format
+
+**Size Calculations:**
+- Accurate Blob-based size measurement
+- Human-readable formatting (B, KB, MB)
+- Easy comparison to choose the best format
 
 ### Preview & Visualization
 
@@ -179,22 +209,29 @@ Generate optimized code for your favorite framework:
   - Solid Light (white)
   - Solid Dark (dark gray)
 - **Interactive Controls**:
-  - Zoom: 10% - 200% zoom range
+  - Zoom: 20% - 400% zoom range with 20% steps
   - Pan: Click and drag to move SVG around
-  - Rotate: 90°, 180°, 270° rotation
-  - Flip: Horizontal and vertical flip
-  - Resize: Adjust width and height (proportional scaling)
+  - Rotate: 90° clockwise rotation with proper center calculations
+  - Flip: Horizontal and vertical flip with scale transformations
+  - Resize: Adjust width and height with proportional aspect ratio locking
+- **SVG Transformation Engine** (`svg-transform.ts`):
+  - DOMParser-based SVG manipulation
+  - Preserves viewBox attributes during transformations
+  - Handles both explicit width/height and viewBox-only SVGs
+  - Reset functionality to restore original dimensions
 - **Side-by-Side Comparison**: Compare original vs optimized
-- **Code Diff View**: Refractor-powered syntax highlighting with side-by-side diff
+- **Code Diff View**: Refractor-powered syntax highlighting with unified diff format
 
 ### Performance Optimizations
 
 - **Web Workers**: SVGO, Prettier, and code generation run in separate threads
-- **Lazy Loading**: Components load on-demand
-- **Code Splitting**: Optimized bundle chunking (refractor, prettier, svgo, ui)
-- **Result Caching**: Smart LRU cache with 5-minute TTL
+- **Lazy Loading**: Components load on-demand (diff viewer, code viewer, config panel)
+- **Code Splitting**: Optimized bundle chunking (refractor ~80KB, prettier ~200KB, svgo ~6KB, ui)
+- **Result Caching**: Smart LRU cache with 5-minute TTL and 100-entry limit
 - **Lightweight Syntax Highlighting**: Refractor instead of Monaco Editor (~200KB reduction)
-- **Optimized Bundle**: Main optimize route only 15.79 KB (97.4% reduction)
+- **Optimized Bundle**: Main optimize route only 15.79 KB (97.4% reduction from 611.74 KB)
+- **Debounced Updates**: 150ms debounce on diff calculations to prevent excessive re-renders
+- **Auto Tab Switching**: Automatically switches to "optimized" tab when compression completes
 
 ---
 
@@ -207,43 +244,121 @@ tiny-svg/
 │       ├── src/
 │       │   ├── components/       # React components
 │       │   │   ├── lazy/        # Lazy-loaded wrappers
-│       │   │   ├── optimize/    # Optimize page components
-│       │   │   └── ui/          # Reusable UI components
-│       │   ├── contents/        # i18n content definitions
+│       │   │   ├── optimize/    # Optimize page components (6 files)
+│       │   │   │   ├── code-tab-content.tsx
+│       │   │   │   ├── data-uri-tab-content.tsx
+│       │   │   │   ├── optimize-header.tsx
+│       │   │   │   ├── optimize-layout.tsx
+│       │   │   │   ├── optimize-tabs.tsx
+│       │   │   │   └── compact-upload-button.tsx
+│       │   │   ├── ui/          # Reusable UI components (shadcn/ui)
+│       │   │   │   └── diff/    # Custom diff viewer
+│       │   │   ├── svg-preview.tsx
+│       │   │   ├── svg-size-adjuster.tsx
+│       │   │   ├── code-viewer.tsx
+│       │   │   ├── code-diff-viewer.tsx
+│       │   │   └── config-panel.tsx
+│       │   ├── contents/        # i18n content definitions (*.content.ts)
 │       │   │   ├── home.content.ts
 │       │   │   ├── about.content.ts
+│       │   │   ├── blog.content.ts
 │       │   │   └── optimize.content.ts
-│       │   ├── hooks/           # Custom React hooks
+│       │   ├── hooks/           # Custom React hooks (12+ hooks)
 │       │   │   ├── use-auto-compress.ts
+│       │   │   ├── use-auto-tab-switch.ts
 │       │   │   ├── use-code-generation.ts
 │       │   │   ├── use-local-storage.ts
+│       │   │   ├── use-optimize-page.ts
+│       │   │   ├── use-svg-pan-zoom.ts
 │       │   │   └── ...
-│       │   ├── lib/             # Utility functions
+│       │   ├── lib/             # Utility functions (18 files)
+│       │   │   ├── constants.ts        # Centralized constants (262 lines)
 │       │   │   ├── svgo-config.ts      # SVGO configuration
 │       │   │   ├── svg-to-code.ts      # Code generators
-│       │   │   └── worker-utils/       # Worker utilities
-│       │   ├── routes/          # File-based routing
+│       │   │   ├── svg-transform.ts    # SVG transformations
+│       │   │   ├── data-uri-utils.ts   # Data URI conversions
+│       │   │   ├── file-utils.ts       # File operations
+│       │   │   ├── blog.ts             # Blog utilities
+│       │   │   ├── seo.ts              # SEO metadata
+│       │   │   └── worker-utils/       # Worker management
+│       │   │       ├── cache.ts        # LRU cache with TTL
+│       │   │       ├── worker-manager.ts
+│       │   │       ├── svgo-worker-client.ts
+│       │   │       ├── prettier-worker-client.ts
+│       │   │       └── code-generator-worker-client.ts
+│       │   ├── routes/          # File-based routing (TanStack Start)
 │       │   │   └── {-$locale}/  # Locale-based routing
 │       │   │       ├── index.tsx    # Home page
 │       │   │       ├── about.tsx    # About page
-│       │   │       └── optimize.tsx # Optimize page
+│       │   │       ├── optimize.tsx # Optimize page
+│       │   │       └── blog/        # Blog routes
+│       │   │           ├── index.tsx
+│       │   │           └── $slug.tsx
 │       │   ├── store/           # Global state (Zustand)
-│       │   └── workers/         # Web Workers
+│       │   │   ├── svg-store.ts  # SVG optimization state
+│       │   │   └── ui-store.ts   # UI state (tabs, export dimensions)
+│       │   └── workers/         # Web Workers (3 workers)
 │       │       ├── svgo.worker.ts
 │       │       ├── code-generator.worker.ts
 │       │       └── prettier.worker.ts
 │       ├── public/              # Static assets
-│       ├── intlayer.config.ts   # i18n configuration
+│       ├── intlayer.config.ts   # i18n configuration (EN, ZH, KO, DE)
 │       └── vite.config.ts       # Vite configuration
 ├── docs/
 │   └── images/                  # Documentation images
-├── package.json                 # Root package.json
+├── package.json                 # Root package.json (pnpm workspace)
 └── README.md                    # This file
 ```
+
+**Key Directories:**
+
+- `lib/constants.ts`: **262-line centralized constants file** with all magic numbers and configuration values, organized by category (SVG, Data URI, Export, Colors, Time, Code Generation, Diff, Zoom, SEO, Blog)
+- `components/optimize/`: Modular optimize page components with separation of concerns
+- `hooks/`: 12+ custom hooks for file handling, compression, code generation, pan/zoom, and auto-switching
+- `lib/worker-utils/`: Worker management with LRU caching (5-minute TTL, 100-entry limit)
+- `store/`: Zustand stores for SVG optimization state and UI state (tabs, export dimensions)
 
 ---
 
 ## 🔧 Configuration
+
+### Constants Configuration
+
+All magic numbers and configuration values are centralized in `lib/constants.ts` (262 lines):
+
+```typescript
+// SVG Related Constants
+export const SVG_MIME_TYPE = "image/svg+xml";
+export const DEFAULT_VIEWBOX = "0 0 24 24";
+export const SVG_DIMENSIONS = "1em";
+
+// Image Export Constants
+export const DEFAULT_JPEG_QUALITY = 0.95;
+export const EXPORT_SCALE_OPTIONS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6, 7, 8] as const;
+
+// Cache Configuration
+export const CACHE_MAX_AGE_MINUTES = 5;
+export const DEFAULT_MAX_SIZE = 100;
+
+// Performance
+export const DEBOUNCE_DELAY = 150; // milliseconds
+export const COPY_BUTTON_RESET_DELAY = 2000;
+
+// ... 50+ more constants organized by category
+```
+
+**Constant Categories:**
+- SVG Related (MIME types, dimensions, viewBox)
+- Data URI & Encoding (Base64, URL encoding)
+- Image Export (PNG, JPEG quality, scale options)
+- Color Constants (currentColor, ignored colors)
+- File Size & Formatting (bytes divisor, units)
+- Time & Duration (cache TTL, debounce delays)
+- Code Generation (Prettier config, parser mapping)
+- Diff Algorithm (max edits, change ratio)
+- Zoom & Pan (min/max zoom, step sizes)
+- SVG Transformation (rotation angles, scale divisors)
+- SEO & Metadata (base URL, Open Graph)
 
 ### SVGO Plugins
 
@@ -448,19 +563,44 @@ apps/web/.output/
 
 ---
 
-## TODO
+## 🗺️ Roadmap & TODO
 
-- [x] Upload header block (uploaded after, then reupload)
-- [x] Data URL tab (minified Data URI, base64, encodeURIComponent)
-- [x] SVG Grab move, scale (pan and zoom controls)
-- [x] SVG rotation, horizontal flip, vertical flip, width and height adjustment (proportional)
-- [x] Replace Monaco Editor with lightweight syntax highlighting (Refractor)
-- [x] Add shadcn diff-viewer for code comparison
-- [ ] SVG share (share name, link expires - need server storage)
-- [ ] SVG history (list, use, LocalStorage)
-- [ ] SVG setting attrs demo (hover attrs show demo image or motion demo)
-- [ ] SVG collection (list, server storage)
-- [ ] SVG AI find (AI recognizes SVG images, provides descriptive keywords, and performs searches.)
+### ✅ Completed Features
+
+- [x] **Upload header block** - Re-upload functionality after initial upload
+- [x] **Data URI tab** - Three formats: minified, base64, and URL-encoded with size comparison
+- [x] **SVG pan and zoom** - Interactive controls (20%-400% zoom, click-and-drag pan)
+- [x] **SVG transformations** - Rotate (90°), flip (horizontal/vertical), resize (proportional)
+- [x] **Lightweight syntax highlighting** - Replaced Monaco Editor with Refractor (~200KB reduction)
+- [x] **Diff viewer** - shadcn/ui-based diff comparison with unified diff format
+- [x] **Export dimensions** - Customizable PNG/JPEG export with scale presets (0.25x-8x)
+- [x] **Constants refactoring** - Centralized 262-line constants file with comprehensive documentation
+- [x] **Auto tab switching** - Automatically switches to "optimized" tab after compression
+- [x] **Blog system** - MDX-based blog with Content Collections integration
+
+### 🚧 In Progress
+
+- [ ] **PWA support** - Progressive Web App capabilities for offline usage
+- [ ] **Batch optimization** - Process multiple SVG files at once
+
+### 📋 Planned Features
+
+- [ ] **SVG share** - Generate shareable links with expiration (requires server storage)
+- [ ] **SVG history** - Track previously optimized SVGs in LocalStorage with restore functionality
+- [ ] **Interactive plugin demos** - Hover over SVGO plugin settings to see visual examples
+- [ ] **SVG collection** - Save favorite SVGs to a personal collection (requires authentication & server storage)
+- [ ] **AI-powered search** - AI recognizes SVG content and provides descriptive keywords for intelligent search
+- [ ] **SVG sprite generator** - Combine multiple SVGs into sprite sheets
+- [ ] **Accessibility checker** - Analyze and suggest improvements for SVG accessibility
+- [ ] **Animation support** - Preserve and optimize SVG animations (SMIL, CSS)
+
+### 💡 Ideas Under Consideration
+
+- Advanced optimization presets (web, print, icons)
+- SVG to other formats (PDF, EPS, PNG sequence)
+- Collaborative optimization sessions
+- Plugin marketplace for custom SVGO plugins
+- VS Code extension integration
 
 ## 🤝 Contributing
 

@@ -249,7 +249,7 @@ export const BASE_URL = "https://tiny-svg.com";
 export const OG_IMAGE_URL = `${BASE_URL}/og-image.png`;
 
 /** Twitter/X handle for the application */
-export const TWITTER_HANDLE = "@tinysvg";
+export const TWITTER_HANDLE = "@hehehai";
 
 /** Logo path for structured data */
 export const LOGO_PATH = `${BASE_URL}/logo.png`;
