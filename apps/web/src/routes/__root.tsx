@@ -5,10 +5,23 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { lazy, Suspense } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "@/styles.css?url";
+
+// Lazy load PWA components to avoid SSR issues
+const PWAUpdatePrompt = lazy(() =>
+  import("@/components/pwa/pwa-update-prompt").then((m) => ({
+    default: m.PWAUpdatePrompt,
+  }))
+);
+const InstallPrompt = lazy(() =>
+  import("@/components/pwa/install-prompt").then((m) => ({
+    default: m.InstallPrompt,
+  }))
+);
 
 export type RouterAppContext = Record<string, never>;
 
@@ -148,6 +161,10 @@ function RootDocument() {
             <Outlet />
           </ErrorBoundary>
           <Toaster richColors />
+          <Suspense fallback={null}>
+            <PWAUpdatePrompt />
+            <InstallPrompt />
+          </Suspense>
           <TanStackRouterDevtools position="bottom-left" />
         </ThemeProvider>
         <Scripts />

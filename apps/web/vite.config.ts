@@ -6,7 +6,12 @@ import { Locales } from "intlayer";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 import { intlayer, intlayerMiddleware } from "vite-intlayer";
+import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+// PWA runtime caching patterns
+const GOOGLE_FONTS_PATTERN = /^https:\/\/fonts\.googleapis\.com\/.*/i;
+const GSTATIC_FONTS_PATTERN = /^https:\/\/fonts\.gstatic\.com\/.*/i;
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -64,6 +69,50 @@ export default defineConfig(({ mode }) => ({
       },
     }),
     tailwindcss(),
+    ...VitePWA({
+      registerType: "prompt", // User-controlled updates
+      includeAssets: ["*.png", "*.svg", "robots.txt", "sitemap.xml"],
+      manifest: false, // Use existing site.webmanifest
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+        runtimeCaching: [
+          {
+            urlPattern: GOOGLE_FONTS_PATTERN,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "google-fonts-cache",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: GSTATIC_FONTS_PATTERN,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "gstatic-fonts-cache",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
+        navigateFallback: null, // TanStack Start handles routing
+        skipWaiting: false, // User-controlled updates
+        clientsClaim: false,
+      },
+      devOptions: {
+        enabled: false, // Disable in dev for faster iteration
+      },
+    }),
   ],
   build: {
     rollupOptions: {

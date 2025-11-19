@@ -1,10 +1,50 @@
 {
-  "name": "Tiny SVG",
+  "name": "Tiny SVG - SVG Optimizer & Converter",
   "short_name": "Tiny SVG",
-  "description": "Free online SVG optimizer and converter. Compress SVG files up to 70%, convert to React, Vue, and Svelte components.",
+  "description": "Free online SVG optimizer and converter. Compress SVG files up to 70%, convert to React, Vue, and Svelte components. Works offline!",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
-  "icons": []
+  "categories": ["productivity", "utilities", "development"],
+  "icons": [
+    {
+      "src": "/pwa-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Optimize SVG",
+      "short_name": "Optimize",
+      "description": "Open SVG optimizer",
+      "url": "/optimize",
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
 }

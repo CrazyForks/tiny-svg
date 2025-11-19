@@ -4,6 +4,7 @@ import { useIntlayer } from "react-intlayer";
 import { LocaleSwitcher } from "@/components/intlayer/locale-swithcer";
 import { LocalizedLink } from "@/components/intlayer/localized-link";
 import { useTheme } from "@/components/theme-provider";
+import { Logo } from "./logo";
 
 export default function Header() {
   const { nav } = useIntlayer("header");
@@ -72,7 +73,7 @@ export default function Header() {
             className="flex items-center gap-2 font-bold text-lg md:text-xl"
             to="/"
           >
-            <span className="i-hugeicons-chef-hat size-5 md:size-6" />
+            <Logo className="size-5 md:size-6" />
             <span>Tiny SVG</span>
           </LocalizedLink>
           {/* Desktop Navigation */}
