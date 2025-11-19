@@ -80,8 +80,23 @@ export const PNG_MIME_TYPE = "image/png";
 /** JPEG MIME type */
 export const JPEG_MIME_TYPE = "image/jpeg";
 
+/** WebP MIME type */
+export const WEBP_MIME_TYPE = "image/webp";
+
+/** ICO MIME type */
+export const ICO_MIME_TYPE = "image/x-icon";
+
+/** PDF MIME type */
+export const PDF_MIME_TYPE = "application/pdf";
+
 /** Default JPEG quality (0.0 to 1.0, where 1.0 is highest quality) */
 export const DEFAULT_JPEG_QUALITY = 0.95;
+
+/** Default WebP quality (0.0 to 1.0, where 1.0 is highest quality) */
+export const DEFAULT_WEBP_QUALITY = 0.9;
+
+/** Default ICO sizes (multiple sizes for better compatibility) */
+export const DEFAULT_ICO_SIZES = [16, 32, 48, 64, 128, 256] as const;
 
 /** Default export scale multiplier */
 export const DEFAULT_EXPORT_SCALE = 2;

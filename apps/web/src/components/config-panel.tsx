@@ -1,30 +1,20 @@
 import { useCallback, useEffect } from "react";
-import { useIntlayer, useLocale } from "react-intlayer";
-import { toast } from "sonner";
+import { useIntlayer } from "react-intlayer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
-  DEFAULT_JPEG_QUALITY,
   DEFAULT_SVG_DIMENSION,
   EXPORT_SCALE_OPTIONS,
   SCALE_MATCH_THRESHOLD,
   VIEWBOX_SPLIT_PATTERN,
   VIEWBOX_VALUES_COUNT,
 } from "@/lib/constants";
-import { exportAsJpeg, exportAsPng } from "@/lib/file-utils";
-import { getPluginLabel } from "@/lib/svgo-plugins";
 import { useSvgStore } from "@/store/svg-store";
 import { type ExportScale, useUiStore } from "@/store/ui-store";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { ExportPanel } from "./export-panel";
 
 type ConfigPanelProps = {
   isCollapsed: boolean;
@@ -56,8 +46,8 @@ export function ConfigPanel({
     setExportScale,
     setExportDimensions,
   } = useUiStore();
-  const { settings, messages } = useIntlayer("optimize");
-  const { locale } = useLocale();
+  const { settings } = useIntlayer("optimize");
+  const pluginLabels = useIntlayer("plugins");
 
   // 提供默认值，防止服务器端渲染错误
   const safeSettings = settings || {
@@ -80,13 +70,6 @@ export function ConfigPanel({
       png: "Export as PNG",
       jpeg: "Export as JPEG",
     },
-  };
-
-  const safeMessages = messages || {
-    noSvgToExport: "No optimized SVG to export",
-    exportPngSuccess: "Exported as PNG!",
-    exportJpegSuccess: "Exported as JPEG!",
-    exportError: "Failed to export",
   };
 
   // Get SVG dimensions
@@ -209,38 +192,6 @@ export function ConfigPanel({
   if (isCollapsed) {
     return <div className={className} />;
   }
-
-  const handleExportPng = async () => {
-    if (!compressedSvg) {
-      toast.error(safeMessages.noSvgToExport);
-      return;
-    }
-    try {
-      await exportAsPng(compressedSvg, fileName, exportWidth, exportHeight);
-      toast.success(safeMessages.exportPngSuccess);
-    } catch {
-      toast.error(safeMessages.exportError);
-    }
-  };
-
-  const handleExportJpeg = async () => {
-    if (!compressedSvg) {
-      toast.error(safeMessages.noSvgToExport);
-      return;
-    }
-    try {
-      await exportAsJpeg(
-        compressedSvg,
-        fileName,
-        DEFAULT_JPEG_QUALITY,
-        exportWidth,
-        exportHeight
-      );
-      toast.success(safeMessages.exportJpegSuccess);
-    } catch {
-      toast.error(safeMessages.exportError);
-    }
-  };
 
   return (
     <div className={`flex flex-col ${className || ""}`}>
@@ -383,7 +334,8 @@ export function ConfigPanel({
                 key={plugin.name}
               >
                 <Label className="cursor-pointer text-sm" htmlFor={plugin.name}>
-                  {getPluginLabel(plugin.name, locale)}
+                  {(pluginLabels as Record<string, string>)[plugin.name] ||
+                    plugin.name}
                 </Label>
                 <Switch
                   checked={plugin.enabled}
@@ -396,81 +348,16 @@ export function ConfigPanel({
         </Card>
 
         {/* Export Options */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between gap-1">
-              <h3 className="text-base">{safeSettings.export.title}</h3>
-              {compressedSvg && (
-                <div className="flex items-center gap-1">
-                  {/* Scale Selector */}
-                  <Select
-                    onValueChange={handleScaleChange}
-                    value={exportScale?.toString() || "custom"}
-                  >
-                    <SelectTrigger
-                      className="w-14 px-2 data-[size=default]:h-8 md:text-xs"
-                      id="export-scale"
-                    >
-                      <SelectValue placeholder="--" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {EXPORT_SCALE_OPTIONS.map((scale) => (
-                        <SelectItem key={scale} value={scale.toString()}>
-                          {scale}x
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  {/* Width Input */}
-                  <Input
-                    className="h-8 w-16 px-2 md:text-xs"
-                    id="export-width"
-                    min={1}
-                    onChange={(e) => handleWidthChange(e.target.value)}
-                    type="number"
-                    value={exportWidth || ""}
-                  />
-
-                  {/* Height Input */}
-                  <Input
-                    className="h-8 w-16 px-2 md:text-xs"
-                    id="export-height"
-                    min={1}
-                    onChange={(e) => handleHeightChange(e.target.value)}
-                    type="number"
-                    value={exportHeight || ""}
-                  />
-                </div>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {/* Export Buttons */}
-            <div className="space-y-2 pt-1">
-              <Button
-                className="w-full"
-                disabled={!compressedSvg}
-                onClick={handleExportPng}
-                type="button"
-                variant="outline"
-              >
-                <span className="i-hugeicons-image-02 mr-2 size-4" />
-                {safeSettings.export.png}
-              </Button>
-              <Button
-                className="w-full"
-                disabled={!compressedSvg}
-                onClick={handleExportJpeg}
-                type="button"
-                variant="outline"
-              >
-                <span className="i-hugeicons-image-02 mr-2 size-4" />
-                {safeSettings.export.jpeg}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <ExportPanel
+          compressedSvg={compressedSvg}
+          exportHeight={exportHeight}
+          exportScale={exportScale}
+          exportWidth={exportWidth}
+          fileName={fileName}
+          onHeightChange={handleHeightChange}
+          onScaleChange={handleScaleChange}
+          onWidthChange={handleWidthChange}
+        />
       </div>
     </div>
   );
