@@ -48,6 +48,7 @@ Simple, intuitive interface to get started quickly.
 
 ### Optimize Page
 ![Optimize Page](./docs/images/optimize.webp)
+![Optimize Page Code](./docs/images/optimize-code.webp)
 
 Powerful optimization tools with real-time preview and code generation.
 
