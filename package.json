@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "check": "biome check --write .",
-    "dev": "pnpm --filter '*' dev",
-    "build": "pnpm --filter '*' build",
-    "check-types": "pnpm --filter '*' check-types",
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "check-types": "pnpm -r check-types",
     "dev:web": "pnpm --filter web dev"
   },
   "dependencies": {
@@ -21,5 +21,6 @@
     "@types/node": "^22.13.11",
     "husky": "^9.1.7",
     "ultracite": "6.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }
