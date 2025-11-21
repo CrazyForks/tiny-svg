@@ -27,6 +27,8 @@
         "@radix-ui/react-switch": "^1.2.6",
         "@radix-ui/react-tabs": "^1.1.13",
         "@tailwindcss/vite": "^4.1.8",
+        "@takumi-rs/image-response": "^0.52.2",
+        "@takumi-rs/template": "^0.52.2",
         "@tanstack/react-form": "^1.23.5",
         "@tanstack/react-query": "^5.85.5",
         "@tanstack/react-router": "^1.132.31",
@@ -606,6 +608,32 @@
     "@tailwindcss/oxide-win32-x64-msvc": ["@tailwindcss/oxide-win32-x64-msvc@4.1.17", "", { "os": "win32", "cpu": "x64" }, "sha512-SKWM4waLuqx0IH+FMDUw6R66Hu4OuTALFgnleKbqhgGU30DY20NORZMZUKgLRjQXNN2TLzKvh48QXTig4h4bGw=="],
 
     "@tailwindcss/vite": ["@tailwindcss/vite@4.1.17", "", { "dependencies": { "@tailwindcss/node": "4.1.17", "@tailwindcss/oxide": "4.1.17", "tailwindcss": "4.1.17" }, "peerDependencies": { "vite": "^5.2.0 || ^6 || ^7" } }, "sha512-4+9w8ZHOiGnpcGI6z1TVVfWaX/koK7fKeSYF3qlYg2xpBtbteP2ddBxiarL+HVgfSJGeK5RIxRQmKm4rTJJAwA=="],
+
+    "@takumi-rs/core": ["@takumi-rs/core@0.52.2", "", { "optionalDependencies": { "@takumi-rs/core-darwin-arm64": "0.52.2", "@takumi-rs/core-darwin-x64": "0.52.2", "@takumi-rs/core-linux-arm64-gnu": "0.52.2", "@takumi-rs/core-linux-arm64-musl": "0.52.2", "@takumi-rs/core-linux-x64-gnu": "0.52.2", "@takumi-rs/core-linux-x64-musl": "0.52.2", "@takumi-rs/core-win32-arm64-msvc": "0.52.2", "@takumi-rs/core-win32-x64-msvc": "0.52.2" } }, "sha512-nmYGu49pbshU6RdF2wJRH9Y29pE9orBAYrazxCHr2XlyLNZ+AGyV+UDN3R4Gf5J3R+gzJ8JxxbsYUTAxF1RczA=="],
+
+    "@takumi-rs/core-darwin-arm64": ["@takumi-rs/core-darwin-arm64@0.52.2", "", { "os": "darwin", "cpu": "arm64" }, "sha512-cv8venLslYDIEK9kGnlU1MeFX8jcV/cC4ByQgu0vcOVV7S4lYlwEkz+hnu8COhjWDo9q3kwEM45OTerLyHE/OQ=="],
+
+    "@takumi-rs/core-darwin-x64": ["@takumi-rs/core-darwin-x64@0.52.2", "", { "os": "darwin", "cpu": "x64" }, "sha512-yiLRign4zYXS3ecD95KqUiP1QMHczz5I9gxZtwYjF+mDsWluuPwHrceYV9hb77ZhsoisFYTiyVycT6EzA5/1sg=="],
+
+    "@takumi-rs/core-linux-arm64-gnu": ["@takumi-rs/core-linux-arm64-gnu@0.52.2", "", { "os": "linux", "cpu": "arm64" }, "sha512-pwluihLZBAxk9fBVi6eExjKlIbt0s+pSTGUpVScVAXh7l+Lxo5H+B4QWyt0WcVFL4ICAPjqv3+TrtnULyy0vhA=="],
+
+    "@takumi-rs/core-linux-arm64-musl": ["@takumi-rs/core-linux-arm64-musl@0.52.2", "", { "os": "linux", "cpu": "arm64" }, "sha512-O5i+E6RJaHvBiJrYG0tJxbdTZEYJk/gQJxmadEe2X3J9ndMtDeJEu9Y6ranyF7vk6qJfXuL27gNc1pP7qA4CbA=="],
+
+    "@takumi-rs/core-linux-x64-gnu": ["@takumi-rs/core-linux-x64-gnu@0.52.2", "", { "os": "linux", "cpu": "x64" }, "sha512-dTZNoNEzifUoJprJmUvR/OTpEDVCqOGFKoFtM+UsrXkogUXNxfixQ4aEgJnxP15tFfTLn5N+SLU1LCePJ7ycOw=="],
+
+    "@takumi-rs/core-linux-x64-musl": ["@takumi-rs/core-linux-x64-musl@0.52.2", "", { "os": "linux", "cpu": "x64" }, "sha512-Fqu+KmoFz8xK25myP2lTy3u9vZPhjH+nHGdcOb8cUEySGbVNkuQAtGcxfxZZ1CZIoLfoaVcZuMIOjIJ2FsCbSA=="],
+
+    "@takumi-rs/core-win32-arm64-msvc": ["@takumi-rs/core-win32-arm64-msvc@0.52.2", "", { "os": "win32", "cpu": "arm64" }, "sha512-robTtimwYr9AuH4SZFgE6585AcPhXNNnb1qMY58RcBMrMXXsv4G120fMPj1LOgYYhq2tR6Z9Mx+H5eU1tJTigw=="],
+
+    "@takumi-rs/core-win32-x64-msvc": ["@takumi-rs/core-win32-x64-msvc@0.52.2", "", { "os": "win32", "cpu": "x64" }, "sha512-97BHwi8FuCuTwwBzC1dAul3DVzhSilOb604eNlze27Iucky8eFrjzQGVIW7qkWWcIndaJIFzU/dS/hLIqWuANA=="],
+
+    "@takumi-rs/helpers": ["@takumi-rs/helpers@0.52.2", "", {}, "sha512-VQv+ZkPD2y9ELkZzrJiMWW8z0UwxuBuMxF+L4xw/Y2BZ0IMJ7viZTkP5zTjFFDkAsFuCGforTlsqU7LPY1WDUQ=="],
+
+    "@takumi-rs/image-response": ["@takumi-rs/image-response@0.52.2", "", { "dependencies": { "@takumi-rs/core": "0.52.2", "@takumi-rs/helpers": "0.52.2", "@takumi-rs/wasm": "0.52.2" } }, "sha512-8gLqgclTW7+GNtVmtoS7RPcdy/I73Na5mQ4/UZN27y9E4xvpJzyZujWPfdKkXLRZJgNlNThbRguXyD1vABnv6A=="],
+
+    "@takumi-rs/template": ["@takumi-rs/template@0.52.2", "", {}, "sha512-RT5PFrzoQIBvuxZguAcMycFze7WdFRc2sdak8MldPZBURkEE/H3KUHo6MmJOJ7hXg1sAWBFV56CU6h0Pyg/sSw=="],
+
+    "@takumi-rs/wasm": ["@takumi-rs/wasm@0.52.2", "", {}, "sha512-rTq/oSx7ZoWOqvw5ks5Nf590jP8mzcd+48H6EsdAmB1Q/HhdPbDqB8rpoPU85r/QI5IvNn4APcTSw934MdPncw=="],
 
     "@tanstack/devtools-event-client": ["@tanstack/devtools-event-client@0.3.5", "", {}, "sha512-RL1f5ZlfZMpghrCIdzl6mLOFLTuhqmPNblZgBaeKfdtk5rfbjykurv+VfYydOFXj0vxVIoA2d/zT7xfD7Ph8fw=="],
 

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OgRouteImport } from './routes/og'
 import { Route as Char123LocaleChar125RouteRouteImport } from './routes/{-$locale}/route'
 import { Route as Char123LocaleChar125IndexRouteImport } from './routes/{-$locale}/index'
 import { Route as Char123LocaleChar125OptimizeRouteImport } from './routes/{-$locale}/optimize'
@@ -17,6 +18,11 @@ import { Route as Char123LocaleChar125BlogRouteRouteImport } from './routes/{-$l
 import { Route as Char123LocaleChar125BlogIndexRouteImport } from './routes/{-$locale}/blog/index'
 import { Route as Char123LocaleChar125BlogSlugRouteImport } from './routes/{-$locale}/blog/$slug'
 
+const OgRoute = OgRouteImport.update({
+  id: '/og',
+  path: '/og',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char123LocaleChar125RouteRoute =
   Char123LocaleChar125RouteRouteImport.update({
     id: '/{-$locale}',
@@ -62,6 +68,7 @@ const Char123LocaleChar125BlogSlugRoute =
 
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/og': typeof OgRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125BlogRouteRouteWithChildren
   '/{-$locale}/about': typeof Char123LocaleChar125AboutRoute
   '/{-$locale}/optimize': typeof Char123LocaleChar125OptimizeRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/blog/': typeof Char123LocaleChar125BlogIndexRoute
 }
 export interface FileRoutesByTo {
+  '/og': typeof OgRoute
   '/{-$locale}/about': typeof Char123LocaleChar125AboutRoute
   '/{-$locale}/optimize': typeof Char123LocaleChar125OptimizeRoute
   '/{-$locale}': typeof Char123LocaleChar125IndexRoute
@@ -79,6 +87,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}': typeof Char123LocaleChar125RouteRouteWithChildren
+  '/og': typeof OgRoute
   '/{-$locale}/blog': typeof Char123LocaleChar125BlogRouteRouteWithChildren
   '/{-$locale}/about': typeof Char123LocaleChar125AboutRoute
   '/{-$locale}/optimize': typeof Char123LocaleChar125OptimizeRoute
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/{-$locale}'
+    | '/og'
     | '/{-$locale}/blog'
     | '/{-$locale}/about'
     | '/{-$locale}/optimize'
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/blog/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/og'
     | '/{-$locale}/about'
     | '/{-$locale}/optimize'
     | '/{-$locale}'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/{-$locale}'
+    | '/og'
     | '/{-$locale}/blog'
     | '/{-$locale}/about'
     | '/{-$locale}/optimize'
@@ -116,10 +128,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   Char123LocaleChar125RouteRoute: typeof Char123LocaleChar125RouteRouteWithChildren
+  OgRoute: typeof OgRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/og': {
+      id: '/og'
+      path: '/og'
+      fullPath: '/og'
+      preLoaderRoute: typeof OgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/{-$locale}': {
       id: '/{-$locale}'
       path: '/{-$locale}'
@@ -211,6 +231,7 @@ const Char123LocaleChar125RouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   Char123LocaleChar125RouteRoute: Char123LocaleChar125RouteRouteWithChildren,
+  OgRoute: OgRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

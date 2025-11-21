@@ -56,7 +56,8 @@
         "classFunctions": [
           "cva",
           "cx",
-          "cn"
+          "cn",
+          "tw"
         ],
         "experimental": {
           "classRegex": [

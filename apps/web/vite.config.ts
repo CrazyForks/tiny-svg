@@ -114,6 +114,12 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  ssr: {
+    external: ["@takumi-rs/image-response"],
+  },
+  optimizeDeps: {
+    exclude: ["@takumi-rs/image-response"],
+  },
   build: {
     rollupOptions: {
       output: {

@@ -70,7 +70,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
       {
         property: "og:image",
-        content: "https://tiny-svg.actnow.dev/og-image.png",
+        content: "https://tiny-svg.actnow.dev/og",
       },
       // Twitter
       {
@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       },
       {
         property: "twitter:image",
-        content: "https://tiny-svg.actnow.dev/og-image.png",
+        content: "https://tiny-svg.actnow.dev/og",
       },
       // Additional SEO meta tags
       {
