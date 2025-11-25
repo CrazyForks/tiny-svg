@@ -153,12 +153,5 @@ export default defineConfig(({ mode }) => ({
       external: ["@takumi-rs/core"],
       traceInclude: Object.keys(takumiPackageJson.optionalDependencies),
     },
-    routeRules: {
-      "/og": {
-        cache: {
-          maxAge: 60 * 60 * 24 * 30, // 1 month
-        },
-      },
-    },
   },
 }));
