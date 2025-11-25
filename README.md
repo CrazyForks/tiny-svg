@@ -125,10 +125,6 @@ apps/web/src/
 
 Deployed on **Vercel** for full SSR support. Cloudflare Workers not supported due to MDX runtime restrictions (`eval()` prohibited).
 
-```bash
-cd apps/web && pnpm deploy
-```
-
 ## TODO
 
 - [ ] SVG share - Generate shareable links with expiration
