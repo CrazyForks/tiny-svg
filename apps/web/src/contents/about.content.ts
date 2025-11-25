@@ -75,7 +75,7 @@ const aboutContent = {
           zh: "代码差异查看器，用于前后对比",
           ko: "전후 비교를 위한 코드 차이 뷰어",
           de: "Code-Diff-Viewer für Vorher/Nachher-Vergleich",
-          fr: "Visualiser les différences de code avat/après optimisation",
+          fr: "Visualiser les différences de code avant/après optimisation",
         }),
       },
     },
