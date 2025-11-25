@@ -240,7 +240,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
         type="button"
       >
         <div
-          className="absolute inset-0 flex items-center justify-center"
+          className="svg-preview-container absolute inset-0 flex items-center justify-center"
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px)`,
             transition: isDragging ? "none" : "transform 0.1s ease-out",

@@ -251,3 +251,21 @@ body {
   height: 100% !important;
   object-fit: contain;
 }
+
+/* SVG preview styles for main preview panels */
+.svg-preview-container > div > svg,
+.svg-preview-container svg {
+  min-width: 1px;
+  min-height: 1px;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* Fallback for SVGs without explicit width/height attributes */
+.svg-preview-container > div > svg:not([width]):not([height]),
+.svg-preview-container svg:not([width]):not([height]) {
+  width: 200px;
+  height: 200px;
+}
