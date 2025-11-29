@@ -44,7 +44,7 @@ export function SvgItem({ item, onPreview }: SvgItemProps) {
       <Button
         aria-label="Copy SVG"
         onClick={handleCopy}
-        size="icon-sm"
+        size="icon"
         title="Copy SVG"
         variant="ghost"
       >
@@ -53,7 +53,7 @@ export function SvgItem({ item, onPreview }: SvgItemProps) {
       <Button
         aria-label="Download SVG"
         onClick={handleDownload}
-        size="icon-sm"
+        size="icon"
         title="Download SVG"
         variant="ghost"
       >

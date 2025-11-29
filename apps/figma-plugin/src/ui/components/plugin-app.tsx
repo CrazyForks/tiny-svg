@@ -42,15 +42,15 @@ export function PluginApp() {
         )}
 
         {isCompressing && (
-          <div className="compression-overlay">
-            <div className="compression-card">
-              <div className="spinner" />
-              <div className="compression-text">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            <div className="flex min-w-[200px] flex-col items-center gap-4 rounded-lg border border-border bg-card p-6 shadow-lg">
+              <div className="size-6 animate-spin rounded-full border-2 border-muted border-t-primary" />
+              <div className="text-center text-muted-foreground text-sm">
                 Compressing SVGs... {Math.round(compressionProgress)}%
               </div>
-              <div className="progress-bar">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="progress-fill"
+                  className="h-full rounded-full bg-primary transition-all duration-300"
                   style={{ width: `${compressionProgress}%` }}
                 />
               </div>
@@ -59,7 +59,7 @@ export function PluginApp() {
         )}
 
         {hasItems ? (
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             {items.map((item) => (
               <SvgItem
                 item={item}

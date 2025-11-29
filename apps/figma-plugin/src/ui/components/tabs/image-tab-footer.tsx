@@ -1,6 +1,7 @@
 import { Button } from "@/ui/components/base/button";
 import type { ImageFormat } from "@/ui/store/plugin-store";
 import { usePluginStore } from "@/ui/store/plugin-store";
+import { Checkbox } from "../base/checkbox";
 
 export function ImageTabFooter() {
   const { selectedImageFormats, toggleImageFormat, items, isExporting } =
@@ -18,17 +19,17 @@ export function ImageTabFooter() {
 
   return (
     <>
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {formats.map((format) => (
           <label
-            className="flex cursor-pointer items-center gap-1.5 font-medium text-sm"
+            className="flex cursor-pointer items-center gap-1 font-medium text-xs"
+            htmlFor={format}
             key={format}
           >
-            <input
+            <Checkbox
               checked={selectedImageFormats.includes(format)}
-              className="cursor-pointer"
-              onChange={() => toggleImageFormat(format)}
-              type="checkbox"
+              id={format}
+              onCheckedChange={() => toggleImageFormat(format)}
             />
             <span>{format.toUpperCase()}</span>
           </label>
@@ -38,7 +39,6 @@ export function ImageTabFooter() {
       <Button
         disabled={!(hasItems && hasFormats) || isExporting}
         onClick={handleExportAll}
-        size="sm"
       >
         {isExporting ? "Exporting..." : "Export All"}
       </Button>

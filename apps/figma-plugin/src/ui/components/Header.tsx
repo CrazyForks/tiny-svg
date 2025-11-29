@@ -34,7 +34,7 @@ export function Header() {
 
       <div className="flex items-center gap-2">
         <Select onValueChange={setGlobalPreset} value={globalPreset}>
-          <SelectTrigger className="w-[140px]" size="sm">
+          <SelectTrigger className="w-[140px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -49,11 +49,11 @@ export function Header() {
         <Button
           aria-label="Settings"
           onClick={toggleSettings}
-          size="icon-sm"
+          size="icon"
           title="Settings"
-          variant="ghost"
+          variant="outline"
         >
-          <span className="i-hugeicons-settings-02 size-5" />
+          <span className="i-hugeicons-settings-02 size-4" />
         </Button>
       </div>
     </div>

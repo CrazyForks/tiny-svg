@@ -78,27 +78,31 @@ export function BaseItem({
 
   const renderThumbnail = () => {
     if (isLoadingThumbnail) {
-      return <div className="thumbnail-skeleton" />;
+      return <div className="size-full animate-pulse bg-muted" />;
     }
     if (thumbnail) {
       return (
         <img
           alt={item.name}
-          className="thumbnail"
-          height={48}
+          className="size-full object-contain"
+          height={120}
           src={thumbnail}
-          width={48}
+          width={120}
         />
       );
     }
-    return <div className="thumbnail-placeholder">?</div>;
+    return (
+      <div className="flex size-full items-center justify-center bg-muted text-2xl text-muted-foreground/30">
+        ?
+      </div>
+    );
   };
 
   return (
-    <div className="base-item">
+    <div className="flex gap-2 rounded-lg border border-border bg-background p-2">
       <button
         aria-label={`Preview ${item.name}`}
-        className="thumbnail-button"
+        className="size-12 shrink-0 cursor-pointer overflow-hidden rounded bg-foreground/10 p-1 transition-colors hover:border-ring"
         onClick={onThumbnailClick}
         type="button"
       >
@@ -106,47 +110,49 @@ export function BaseItem({
       </button>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="truncate font-medium text-base" title={item.name}>
+        <div className="truncate text-sm" title={item.name}>
           {item.name}
         </div>
 
-        {showPresetSelector && (
-          <Select onValueChange={handlePresetChange} value={item.preset}>
-            <SelectTrigger
-              className="w-fit"
-              onClick={(e) => e.stopPropagation()}
-              size="sm"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="inherit">Inherit</SelectItem>
-              {presets.map((preset) => (
-                <SelectItem key={preset.id} value={preset.id}>
-                  {preset.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-
-        <div className="text-muted-foreground text-xs">
-          {item.compressedSize ? (
-            <>
-              <span className="line-through opacity-70">
-                {formatSize(item.originalSize)}
-              </span>
-              {" → "}
-              <span className="font-medium text-foreground">
-                {formatSize(item.compressedSize)}
-              </span>{" "}
-              <span className="font-semibold text-success">
-                {formatCompressionRatio(item.compressionRatio)}
-              </span>
-            </>
-          ) : (
-            <span>{formatSize(item.originalSize)}</span>
+        <div className="flex items-center gap-1.5">
+          {showPresetSelector && (
+            <Select onValueChange={handlePresetChange} value={item.preset}>
+              <SelectTrigger
+                className="w-fit"
+                onClick={(e) => e.stopPropagation()}
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="inherit">Inherit</SelectItem>
+                {presets.map((preset) => (
+                  <SelectItem key={preset.id} value={preset.id}>
+                    {preset.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
+
+          <div className="text-muted-foreground text-xs">
+            {item.compressedSize ? (
+              <>
+                <span className="line-through opacity-70">
+                  {formatSize(item.originalSize)}
+                </span>
+                {" → "}
+                <span className="font-medium text-foreground">
+                  {formatSize(item.compressedSize)}
+                </span>{" "}
+                <span className="font-semibold text-success">
+                  {formatCompressionRatio(item.compressionRatio)}
+                </span>
+              </>
+            ) : (
+              <span>{formatSize(item.originalSize)}</span>
+            )}
+          </div>
         </div>
       </div>
 
