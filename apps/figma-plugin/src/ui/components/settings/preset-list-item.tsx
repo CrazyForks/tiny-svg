@@ -15,11 +15,13 @@ import {
   TooltipTrigger,
 } from "@/ui/components/base/tooltip";
 import { DeleteConfirmationDialog } from "@/ui/components/preset/delete-confirmation-dialog";
+import { cn } from "@/ui/lib/utils";
 import { usePluginStore } from "@/ui/store";
 
 interface PresetListItemProps {
   preset: Preset;
   usageCount?: number;
+  isSelected?: boolean;
 }
 
 function formatRelativeTime(timestamp: number): string {
@@ -44,6 +46,7 @@ function formatRelativeTime(timestamp: number): string {
 export function PresetListItem({
   preset,
   usageCount = 0,
+  isSelected = false,
 }: PresetListItemProps) {
   const { openPresetEditor, deletePreset, pinPreset } = usePluginStore();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -71,13 +74,17 @@ export function PresetListItem({
 
   return (
     <>
-      <Item size="sm" variant="outline">
+      <Item
+        className={cn(isSelected && "border-primary")}
+        size="sm"
+        variant="outline"
+      >
         <ItemContent>
           <ItemTitle>
             {preset.name}
             {preset.isDefault && (
               <Badge className="text-xs" variant="secondary">
-                默认
+                系统
               </Badge>
             )}
           </ItemTitle>

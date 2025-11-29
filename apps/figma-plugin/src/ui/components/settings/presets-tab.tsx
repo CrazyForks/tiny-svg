@@ -13,7 +13,8 @@ import { usePluginStore } from "@/ui/store";
 import { PresetListItem } from "./preset-list-item";
 
 export function PresetsTab() {
-  const { presets, openPresetEditor, getPresetUsageCount } = usePluginStore();
+  const { presets, openPresetEditor, getPresetUsageCount, globalPreset } =
+    usePluginStore();
 
   const handleCreate = () => {
     openPresetEditor("create");
@@ -57,6 +58,7 @@ export function PresetsTab() {
       <ItemGroup className="gap-2">
         {sortedPresets.map((preset) => (
           <PresetListItem
+            isSelected={globalPreset === preset.id}
             key={preset.id}
             preset={preset}
             usageCount={getPresetUsageCount(preset.id)}
