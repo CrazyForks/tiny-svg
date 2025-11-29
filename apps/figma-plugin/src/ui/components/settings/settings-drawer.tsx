@@ -4,6 +4,9 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
 } from "@/ui/components/base/drawer";
 import {
   Tabs,
@@ -11,16 +14,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/ui/components/base/tabs";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import { usePluginStore } from "@/ui/store";
 import { AboutTab } from "./about-tab";
 import { PresetsTab } from "./presets-tab";
 
 export function SettingsDrawer() {
-  const { settingsOpen, closeSettings } = usePluginStore();
+  const { settingsOpen, closeSettings, openPresetEditor } = usePluginStore();
   const [activeTab, setActiveTab] = useState("presets");
 
   const handleCreatePreset = () => {
-    // TODO: Open create preset dialog
+    openPresetEditor("create");
   };
 
   return (
@@ -33,18 +36,21 @@ export function SettingsDrawer() {
       }}
       open={settingsOpen}
     >
-      <DrawerContent className="w-full! max-w-full!">
+      <DrawerContent className="h-screen w-full! max-w-full!">
         {/* Tabs */}
         <Tabs
-          className="flex flex-1 flex-col"
+          className="flex h-full flex-1 flex-col gap-0"
           defaultValue="presets"
           onValueChange={setActiveTab}
           value={activeTab}
         >
           {/* Header with Title and Tabs */}
-          <div className="flex items-center justify-between border-b px-4 py-3">
+          <DrawerHeader className="flex items-center justify-between border-b px-4 py-3">
             <div className="flex items-center gap-3">
-              <h2 className="font-semibold">Settings</h2>
+              <DrawerTitle className="font-semibold">Settings</DrawerTitle>
+              <DrawerDescription className="sr-only">
+                Settings
+              </DrawerDescription>
 
               <TabsList>
                 <TabsTrigger value="presets">预设</TabsTrigger>
@@ -75,10 +81,10 @@ export function SettingsDrawer() {
                 </Button>
               </DrawerClose>
             </div>
-          </div>
+          </DrawerHeader>
 
           {/* Tabs Content */}
-          <TabsContent className="flex-1" value="presets">
+          <TabsContent className="h-[calc(100dvh-53px)] flex-1" value="presets">
             <PresetsTab />
           </TabsContent>
 

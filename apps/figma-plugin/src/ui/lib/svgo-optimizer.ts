@@ -1,7 +1,15 @@
-import { optimize } from "svgo/dist/svgo.browser.js";
+/**
+ * SVGO optimizer for browser environment
+ * Uses svgo/browser which is optimized for browser usage
+ */
+
+import { optimize } from "svgo/browser";
+import { getPresetConfig } from "@/lib/preset-utils";
 import type { Preset } from "@/types/messages";
-import { getPresetConfig } from "@/ui/lib/preset-utils";
-import type { SvgItem } from "@/ui/store/plugin-store";
+import type { SvgItem } from "@/ui/store";
+
+// Re-export Config type for convenience
+export type { Config as SvgoConfig } from "svgo/browser";
 
 export interface OptimizedResult {
   id: string;

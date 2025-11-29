@@ -1,6 +1,6 @@
 import { Button } from "@/ui/components/base/button";
-import type { ImageFormat } from "@/ui/store/plugin-store";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import type { ImageFormat } from "@/ui/store";
+import { usePluginStore } from "@/ui/store";
 import { Checkbox } from "../base/checkbox";
 
 export function ImageTabFooter() {

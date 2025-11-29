@@ -6,8 +6,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/components/base/select";
-import type { CodeFormat } from "@/ui/store/plugin-store";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import type { CodeFormat } from "@/ui/store";
+import { usePluginStore } from "@/ui/store";
 
 export function CodeTabFooter() {
   const { selectedCodeFormat, setCodeFormat, items, isExporting } =

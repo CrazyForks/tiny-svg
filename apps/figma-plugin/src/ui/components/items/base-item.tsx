@@ -8,8 +8,8 @@ import {
 } from "@/ui/components/base/select";
 import { generateThumbnail } from "@/ui/lib/thumbnail";
 import { thumbnailCache } from "@/ui/lib/thumbnail-cache";
-import type { SvgItem } from "@/ui/store/plugin-store";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import type { SvgItem } from "@/ui/store";
+import { usePluginStore } from "@/ui/store";
 
 interface BaseItemProps {
   item: SvgItem;

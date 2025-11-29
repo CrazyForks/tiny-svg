@@ -10,15 +10,15 @@ import type {
   SelectionChangedHandler,
 } from "@/types/messages";
 import { optimizeSvgBatch } from "@/ui/lib/svgo-optimizer";
-import type { SvgItem } from "@/ui/store/plugin-store";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import type { SvgItem } from "@/ui/store";
+import { usePluginStore } from "@/ui/store";
 
 export function useFigmaMessages() {
   const {
     setItems,
     setPresets,
-    updatePreset,
-    deletePreset: removePreset,
+    _syncPreset,
+    _syncDeletePreset,
     setError,
     setCompressing,
     setCompressionProgress,
@@ -112,14 +112,14 @@ export function useFigmaMessages() {
     const unsubscribePresetSaved = on<PresetSavedHandler>(
       "PRESET_SAVED",
       (preset) => {
-        updatePreset(preset);
+        _syncPreset(preset);
       }
     );
 
     const unsubscribePresetDeleted = on<PresetDeletedHandler>(
       "PRESET_DELETED",
       (id) => {
-        removePreset(id);
+        _syncDeletePreset(id);
       }
     );
 
@@ -141,8 +141,8 @@ export function useFigmaMessages() {
   }, [
     handleSelectionChanged,
     setPresets,
-    updatePreset,
-    removePreset,
+    _syncPreset,
+    _syncDeletePreset,
     setError,
   ]);
 

@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/ui/components/base/select";
 import { exportAsSpriteSheet, exportAsZip } from "@/ui/lib/svg-export";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import { usePluginStore } from "@/ui/store";
 
 export function SvgTabFooter() {
   const {

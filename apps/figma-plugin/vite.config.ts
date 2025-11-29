@@ -11,6 +11,11 @@ function buildPluginCode() {
     closeBundle: async () => {
       await build({
         configFile: false,
+        resolve: {
+          alias: {
+            "@": resolve(__dirname, "src"),
+          },
+        },
         build: {
           outDir: resolve(__dirname, "dist"),
           emptyOutDir: false,

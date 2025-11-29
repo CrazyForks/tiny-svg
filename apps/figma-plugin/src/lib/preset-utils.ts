@@ -5,6 +5,9 @@ import {
 import type { Config } from "svgo";
 import type { Preset } from "@/types/messages";
 
+// Re-export Config type for convenience
+export type { Config as SvgoConfig } from "svgo";
+
 // ============================================================================
 // Default Presets
 // ============================================================================
@@ -18,7 +21,7 @@ export function getDefaultPresets(): Preset[] {
       description: preset.description,
       icon: preset.icon,
       isDefault: true,
-      svgoConfig: config?.config || { plugins: ["preset-default"] },
+      svgoConfig: config?.config || { plugins: [] },
       createdAt: Date.now() - index * 1000, // Ensure consistent ordering
       updatedAt: Date.now() - index * 1000,
     };
@@ -29,6 +32,10 @@ export function getDefaultPresets(): Preset[] {
 // Preset Conversion
 // ============================================================================
 
+/**
+ * Convert preset to SVGO Config
+ * Ensures multipass is enabled for better optimization
+ */
 export function getPresetConfig(preset: Preset): Config {
   return {
     ...preset.svgoConfig,

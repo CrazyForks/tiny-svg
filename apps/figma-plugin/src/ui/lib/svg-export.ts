@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import type { SvgItem } from "@/ui/store/plugin-store";
+import type { SvgItem } from "@/ui/store";
 
 /**
  * Export multiple SVGs as a ZIP file

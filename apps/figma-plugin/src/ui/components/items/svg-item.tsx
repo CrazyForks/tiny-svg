@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { Button } from "@/ui/components/base/button";
 import { BaseItem } from "@/ui/components/items/base-item";
-import type { SvgItem as SvgItemType } from "@/ui/store/plugin-store";
+import type { SvgItem as SvgItemType } from "@/ui/store";
 
 interface SvgItemProps {
   item: SvgItemType;

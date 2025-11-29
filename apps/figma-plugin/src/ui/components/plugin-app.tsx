@@ -5,13 +5,20 @@ import { Footer } from "@/ui/components/footer";
 import { Header } from "@/ui/components/Header";
 import { SvgItem } from "@/ui/components/items/svg-item";
 import { PluginLayout } from "@/ui/components/layout/plugin-layout";
+import { PresetEditorDrawer } from "@/ui/components/preset/preset-editor-drawer";
 import { SettingsDrawer } from "@/ui/components/settings/settings-drawer";
 import { useFigmaMessages } from "@/ui/hooks/use-figma-messages";
-import { usePluginStore } from "@/ui/store/plugin-store";
+import { usePluginStore } from "@/ui/store";
 
 export function PluginApp() {
-  const { items, error, isCompressing, compressionProgress, clearError } =
-    usePluginStore();
+  const {
+    items,
+    error,
+    isCompressing,
+    compressionProgress,
+    clearError,
+    openPreview,
+  } = usePluginStore();
 
   useFigmaMessages();
 
@@ -66,7 +73,7 @@ export function PluginApp() {
                 item={item}
                 key={item.id}
                 onPreview={() => {
-                  // TODO: Open preview modal
+                  openPreview(item.id);
                 }}
               />
             ))}
@@ -77,6 +84,7 @@ export function PluginApp() {
       </PluginLayout>
 
       <SettingsDrawer />
+      <PresetEditorDrawer />
       <Toaster position="bottom-center" />
     </>
   );

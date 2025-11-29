@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from "@/ui/components/base/select";
 import { Tabs, TabsList, TabsTrigger } from "@/ui/components/base/tabs";
-import { type TabType, usePluginStore } from "@/ui/store/plugin-store";
+import { type TabType, usePluginStore } from "@/ui/store";
 
 export function Header() {
   const {

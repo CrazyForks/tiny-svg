@@ -1,7 +1,7 @@
 import { CodeTabFooter } from "@/ui/components/tabs/code-tab-footer";
 import { ImageTabFooter } from "@/ui/components/tabs/image-tab-footer";
 import { SvgTabFooter } from "@/ui/components/tabs/svg-tab-footer";
-import { useItemsCount, usePluginStore } from "@/ui/store/plugin-store";
+import { useItemsCount, usePluginStore } from "@/ui/store";
 
 export function Footer() {
   const activeTab = usePluginStore((state) => state.activeTab);

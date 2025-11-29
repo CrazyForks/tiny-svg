@@ -22,6 +22,7 @@ export interface Preset {
   description: string;
   icon?: string;
   isDefault: boolean;
+  pinned?: boolean;
   svgoConfig: Config;
   createdAt: number;
   updatedAt: number;
