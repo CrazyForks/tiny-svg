@@ -1,13 +1,26 @@
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/components/base/alert-dialog";
 import {
   Item,
+  ItemActions,
   ItemContent,
-  ItemDescription,
   ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/ui/components/base/item";
 import { ScrollArea } from "@/ui/components/base/scroll-area";
 import { Separator } from "@/ui/components/base/separator";
+import { usePluginStore } from "@/ui/store";
+import { Button } from "../base/button";
 
 const PLUGIN_INFO = {
   name: "Tiny SVG",
@@ -18,6 +31,14 @@ const PLUGIN_INFO = {
 };
 
 export function AboutTab() {
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const resetPresets = usePluginStore((state) => state.resetPresets);
+
+  const handleReset = () => {
+    resetPresets();
+    setShowResetDialog(false);
+  };
+
   return (
     <ScrollArea className="flex-1">
       <div className="mx-auto max-w-md space-y-6 p-6">
@@ -58,7 +79,6 @@ export function AboutTab() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle className="leading-relaxed">GitHub 仓库</ItemTitle>
-                  <ItemDescription>查看源代码和贡献</ItemDescription>
                 </ItemContent>
                 <span className="i-hugeicons-arrow-up-right-01 size-4 text-muted-foreground" />
               </a>
@@ -78,10 +98,26 @@ export function AboutTab() {
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle className="leading-relaxed">报告问题</ItemTitle>
-                  <ItemDescription>反馈 Bug 或建议</ItemDescription>
                 </ItemContent>
                 <span className="i-hugeicons-arrow-up-right-01 size-4 text-muted-foreground" />
               </a>
+            </Item>
+
+            <Item variant="outline">
+              <ItemMedia className="border-none bg-transparent" variant="icon">
+                <span className="i-hugeicons-alert-diamond size-4" />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle className="leading-relaxed">重置预设</ItemTitle>
+              </ItemContent>
+              <ItemActions>
+                <Button
+                  onClick={() => setShowResetDialog(true)}
+                  variant="outline"
+                >
+                  重置
+                </Button>
+              </ItemActions>
             </Item>
           </ItemGroup>
         </div>
@@ -94,6 +130,27 @@ export function AboutTab() {
           <p>Powered by SVGO</p>
         </div>
       </div>
+
+      <AlertDialog onOpenChange={setShowResetDialog} open={showResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认重置预设</AlertDialogTitle>
+            <AlertDialogDescription>
+              此操作将删除所有自定义预设，仅保留默认预设。此操作无法撤销。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="flex-1">取消</AlertDialogCancel>
+            <AlertDialogAction
+              className="flex-1"
+              onClick={handleReset}
+              variant="destructive"
+            >
+              重置
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ScrollArea>
   );
 }

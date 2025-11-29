@@ -90,3 +90,14 @@ export function deletePreset(id: string): Preset[] {
 
   return filtered;
 }
+
+/**
+ * Reset presets to defaults only
+ * Removes all custom presets from storage
+ */
+export function resetPresets(): Preset[] {
+  // Clear storage completely
+  figma.root.setPluginData(PLUGIN_DATA_KEY, "");
+  // Return only the first default preset (Default)
+  return [...DEFAULT_PRESETS];
+}

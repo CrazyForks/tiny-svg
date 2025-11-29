@@ -4,11 +4,13 @@ import type {
   PresetDeletedHandler,
   PresetSavedHandler,
   PresetsLoadedHandler,
+  PresetsResetHandler,
 } from "@/types/messages";
 import { handleAsyncError, sendSuccess } from "../utils/notifications";
 import {
   deletePreset as deletePresetFromStorage,
   loadPresets,
+  resetPresets,
   upsertPreset,
 } from "../utils/preset-storage";
 
@@ -42,4 +44,16 @@ export async function handleDeletePreset(id: string): Promise<void> {
     emit<PresetDeletedHandler>("PRESET_DELETED", id);
     sendSuccess("Preset deleted successfully");
   }, "Failed to delete preset");
+}
+
+/**
+ * Reset all presets to defaults only
+ */
+export async function handleResetPresets(): Promise<void> {
+  await handleAsyncError(async () => {
+    const presets = resetPresets();
+    emit<PresetsResetHandler>("PRESETS_RESET");
+    emit<PresetsLoadedHandler>("PRESETS_LOADED", presets);
+    sendSuccess("Presets reset to defaults");
+  }, "Failed to reset presets");
 }

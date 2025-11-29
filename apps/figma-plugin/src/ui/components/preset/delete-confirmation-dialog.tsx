@@ -40,9 +40,9 @@ export function DeleteConfirmationDialog({
           <AlertDialogAction
             className="flex-1"
             onClick={onConfirm}
-            type="button"
+            variant="destructive"
           >
-            确认删除
+            重置
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

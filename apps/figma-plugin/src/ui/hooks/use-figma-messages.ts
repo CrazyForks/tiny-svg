@@ -7,6 +7,7 @@ import type {
   PresetDeletedHandler,
   PresetSavedHandler,
   PresetsLoadedHandler,
+  PresetsResetHandler,
   SelectionChangedHandler,
 } from "@/types/messages";
 import { optimizeSvgBatch } from "@/ui/lib/svgo-optimizer";
@@ -123,6 +124,14 @@ export function useFigmaMessages() {
       }
     );
 
+    const unsubscribePresetsReset = on<PresetsResetHandler>(
+      "PRESETS_RESET",
+      () => {
+        // Presets will be reloaded via PRESETS_LOADED message
+        // This handler is just for acknowledgment
+      }
+    );
+
     const unsubscribeError = on<ErrorHandler>(
       "ERROR",
       (message: string, details?: string) => {
@@ -136,6 +145,7 @@ export function useFigmaMessages() {
       unsubscribePresets();
       unsubscribePresetSaved();
       unsubscribePresetDeleted();
+      unsubscribePresetsReset();
       unsubscribeError();
     };
   }, [

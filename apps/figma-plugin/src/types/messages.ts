@@ -106,6 +106,16 @@ export interface PresetDeletedHandler extends EventHandler {
   handler: (id: string) => void;
 }
 
+export interface ResetPresetsHandler extends EventHandler {
+  name: "RESET_PRESETS";
+  handler: () => void;
+}
+
+export interface PresetsResetHandler extends EventHandler {
+  name: "PRESETS_RESET";
+  handler: () => void;
+}
+
 export interface ErrorHandler extends EventHandler {
   name: "ERROR";
   handler: (message: string, details?: string) => void;

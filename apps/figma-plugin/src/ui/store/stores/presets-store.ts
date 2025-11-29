@@ -3,6 +3,7 @@ import type { StateCreator } from "zustand";
 import type {
   DeletePresetHandler,
   Preset,
+  ResetPresetsHandler,
   SavePresetHandler,
 } from "@/types/messages";
 
@@ -21,6 +22,7 @@ export interface PresetsActions {
   addPreset: (preset: Preset) => void;
   updatePreset: (preset: Preset) => void;
   deletePreset: (id: string) => void;
+  resetPresets: () => void;
   pinPreset: (id: string) => void;
   getPresetUsageCount: (id: string) => number;
   // Internal methods (don't emit messages, used by message handlers)
@@ -87,6 +89,11 @@ export const createPresetsStore: StateCreator<
     }));
     // Send message to plugin to persist
     emit<DeletePresetHandler>("DELETE_PRESET", id);
+  },
+
+  resetPresets: () => {
+    // Send message to plugin to reset presets
+    emit<ResetPresetsHandler>("RESET_PRESETS");
   },
 
   pinPreset: (id) => {
