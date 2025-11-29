@@ -15,7 +15,7 @@ function buildPluginCode() {
           outDir: resolve(__dirname, "dist"),
           emptyOutDir: false,
           sourcemap: false,
-          target: "es2015",
+          target: "es2017",
           lib: {
             entry: resolve(__dirname, "src/plugin.ts"),
             formats: ["iife"],
@@ -24,7 +24,8 @@ function buildPluginCode() {
           },
           rollupOptions: {
             output: {
-              extend: true,
+              extend: false,
+              footer: "plugin();",
             },
           },
         },
@@ -36,6 +37,11 @@ function buildPluginCode() {
 export default defineConfig({
   plugins: [react(), tailwindcss(), viteSingleFile(), buildPluginCode()],
   root: resolve(__dirname, "src/ui"),
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
   build: {
     outDir: resolve(__dirname, "dist"),
     emptyOutDir: true,

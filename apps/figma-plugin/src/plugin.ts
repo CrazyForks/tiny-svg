@@ -1,266 +1,260 @@
 // Figma Plugin Sandbox Code
-// Note: This runs in Figma's sandbox, not the browser
+// This runs in Figma's isolated sandbox environment (not the browser)
 
-interface SvgNodeData {
-  id: string;
-  name: string;
-  svg: string;
-}
+import { emit, on } from "@create-figma-plugin/utilities";
+import type {
+  CloseHandler,
+  DeletePresetHandler,
+  ErrorHandler,
+  FigmaNodeData,
+  GetPresetsHandler,
+  GetSelectionHandler,
+  InitHandler,
+  Preset,
+  PresetDeletedHandler,
+  PresetSavedHandler,
+  PresetsLoadedHandler,
+  SavePresetHandler,
+  SelectionChangedHandler,
+} from "./types/messages";
+import { getDefaultPresets } from "./ui/lib/preset-utils";
 
-interface MessageData {
-  type: string;
-  data?: unknown;
-}
+// ============================================================================
+// Constants
+// ============================================================================
 
-interface CompressSvgData {
-  svgs: SvgNodeData[];
-  presetId?: string;
-}
+const PLUGIN_DATA_KEY = "tiny-svg-presets";
+const UI_WIDTH = 400;
+const UI_HEIGHT = 600;
 
-interface ReplaceSvgData {
-  nodeId: string;
-  svg: string;
-}
+// Get default presets from shared configuration
+const DEFAULT_PRESETS: Preset[] = getDefaultPresets();
 
-interface ExportComponentData {
-  nodeId: string;
-}
+// ============================================================================
+// Plugin Initialization
+// ============================================================================
 
-interface PluginOverride {
-  name: string;
-  active: boolean;
-}
+export default function () {
+  // Show UI using Figma's native API
+  figma.showUI(__html__, {
+    width: UI_WIDTH,
+    height: UI_HEIGHT,
+    themeColors: true,
+  });
 
-// Compression presets (inline to avoid external dependencies)
-const compressionPresets = [
-  {
-    id: "default",
-    name: "Default",
-    description: "Balanced compression with good compatibility",
-    plugins: ["preset-default"] as (string | PluginOverride)[],
-  },
-  {
-    id: "aggressive",
-    name: "Aggressive",
-    description: "Maximum compression, may remove some attributes",
-    plugins: [
-      "preset-default",
-      "removeAttrs",
-      "removeElementsByAttr",
-      "removeScriptElement",
-      "removeStyleElement",
-    ] as (string | PluginOverride)[],
-  },
-  {
-    id: "minimal",
-    name: "Minimal",
-    description: "Safe compression, preserves all functionality",
-    plugins: [
-      "cleanupAttrs",
-      "cleanupEnableBackground",
-      "cleanupIDs",
-      "cleanupNumericValues",
-      "collapseGroups",
-      "convertColors",
-      "convertPathData",
-      "convertShapeToPath",
-      "convertStyleToAttrs",
-      "convertTransform",
-      "mergePaths",
-      "moveElemsAttrsToGroup",
-      "moveGroupAttrsToElems",
-      "removeComments",
-      "removeDesc",
-      "removeDoctype",
-      "removeEditorsNSData",
-      "removeEmptyAttrs",
-      "removeEmptyContainers",
-      "removeEmptyText",
-      "removeHiddenElems",
-      "removeMetadata",
-      "removeNonInheritableGroupAttrs",
-      "removeRasterImages",
-      "removeTitle",
-      "removeUnknownsAndDefaults",
-      "removeUnusedNS",
-      "removeUselessDefs",
-      "removeUselessStrokeAndFill",
-      "removeXMLProcInst",
-      "sortAttrs",
-    ] as (string | PluginOverride)[],
-  },
-  {
-    id: "preserve-styles",
-    name: "Preserve Styles",
-    description: "Keeps styles and classes for web use",
-    plugins: [
-      "preset-default",
-      { name: "removeStyleElement", active: false },
-      { name: "convertStyleToAttrs", active: false },
-    ] as (string | PluginOverride)[],
-  },
-];
+  // Register message handlers
+  on<InitHandler>("INIT", handleInit);
+  on<GetSelectionHandler>("GET_SELECTION", handleGetSelection);
+  on<GetPresetsHandler>("GET_PRESETS", handleGetPresets);
+  on<SavePresetHandler>("SAVE_PRESET", handleSavePreset);
+  on<DeletePresetHandler>("DELETE_PRESET", handleDeletePreset);
+  on<CloseHandler>("CLOSE", () => {
+    figma.closePlugin();
+  });
 
-// Show the plugin UI
-figma.showUI(__html__, { width: 320, height: 480 });
+  // Selection change listener with debounce
+  let selectionChangeTimeout: ReturnType<typeof setTimeout> | null = null;
 
-// Handle messages from UI
-figma.ui.onmessage = (msg: MessageData) => {
-  handleMessage(msg);
-};
-
-function handleMessage(msg: MessageData): void {
-  switch (msg.type) {
-    case "get-selected-svgs":
-      getSelectedSvgs().then((result) => {
-        figma.ui.postMessage({ type: "selected-svgs", data: result });
-      });
-      break;
-
-    case "compress-svgs": {
-      const compressData = msg.data as CompressSvgData;
-      compressSvgs(compressData.svgs, compressData.presetId).then((result) => {
-        figma.ui.postMessage({ type: "svgs-compressed", data: result });
-      });
-      break;
+  figma.on("selectionchange", () => {
+    if (selectionChangeTimeout) {
+      clearTimeout(selectionChangeTimeout);
     }
 
-    case "replace-svg": {
-      const replaceData = msg.data as ReplaceSvgData;
-      replaceSvgInFigma(replaceData.nodeId, replaceData.svg);
-      break;
-    }
+    selectionChangeTimeout = setTimeout(() => {
+      handleGetSelection();
+    }, 150); // 150ms debounce
+  });
 
-    case "export-as-component": {
-      const exportData = msg.data as ExportComponentData;
-      exportAsComponent(exportData.nodeId);
-      break;
-    }
-
-    case "close":
-      figma.closePlugin();
-      break;
-
-    default:
-      console.warn("Unknown message type:", msg.type);
-  }
+  // Send initial data to UI
+  handleInit();
 }
 
-function getSelectedSvgs(): Promise<{ nodes: SvgNodeData[] }> {
-  const selection = figma.currentPage.selection;
-  const promises: Promise<SvgNodeData | null>[] = [];
+// ============================================================================
+// Message Handlers
+// ============================================================================
 
-  for (const node of selection) {
-    if (canExportAsSvg(node)) {
-      promises.push(exportNodeAsSvg(node));
-    }
-  }
+async function handleInit(): Promise<void> {
+  // Load presets and send to UI
+  await handleGetPresets();
 
-  return Promise.all(promises).then((results) => {
-    const nodes: SvgNodeData[] = [];
-    for (const result of results) {
-      if (result !== null) {
-        nodes.push(result);
+  // Get initial selection
+  await handleGetSelection();
+}
+
+async function handleGetSelection(): Promise<void> {
+  try {
+    const selection = figma.currentPage.selection;
+    const items: FigmaNodeData[] = [];
+
+    for (const node of selection) {
+      if (canExportAsSvg(node)) {
+        const svgData = await exportNodeAsSvg(node);
+        if (svgData) {
+          items.push(svgData);
+        }
       }
     }
-    return { nodes };
-  });
+
+    emit<SelectionChangedHandler>("SELECTION_CHANGED", items);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? `Failed to get selection: ${error.message}`
+        : "Failed to get selection";
+    sendError(errorMessage);
+  }
 }
+
+async function handleGetPresets(): Promise<void> {
+  try {
+    const presets = loadPresets();
+    emit<PresetsLoadedHandler>("PRESETS_LOADED", presets);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? `Failed to load presets: ${error.message}`
+        : "Failed to load presets";
+    sendError(errorMessage);
+  }
+}
+
+async function handleSavePreset(preset: Preset): Promise<void> {
+  try {
+    const presets = loadPresets();
+
+    // Check if preset with same ID exists
+    const existingIndex = presets.findIndex((p) => p.id === preset.id);
+
+    if (existingIndex >= 0) {
+      // Update existing preset
+      presets[existingIndex] = {
+        ...preset,
+        updatedAt: Date.now(),
+      };
+    } else {
+      // Add new preset
+      presets.push({
+        ...preset,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    }
+
+    savePresets(presets);
+
+    emit<PresetSavedHandler>("PRESET_SAVED", preset);
+
+    figma.notify("Preset saved successfully");
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? `Failed to save preset: ${error.message}`
+        : "Failed to save preset";
+    sendError(errorMessage);
+  }
+}
+
+async function handleDeletePreset(id: string): Promise<void> {
+  try {
+    const presets = loadPresets();
+
+    // Prevent deleting default presets
+    const preset = presets.find((p) => p.id === id);
+    if (preset?.isDefault) {
+      throw new Error("Cannot delete default preset");
+    }
+
+    const filtered = presets.filter((p) => p.id !== id);
+
+    savePresets(filtered);
+
+    emit<PresetDeletedHandler>("PRESET_DELETED", id);
+
+    figma.notify("Preset deleted successfully");
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? `Failed to delete preset: ${error.message}`
+        : "Failed to delete preset";
+    sendError(errorMessage);
+  }
+}
+
+// ============================================================================
+// SVG Export Utilities
+// ============================================================================
 
 function canExportAsSvg(node: SceneNode): boolean {
   return "exportAsync" in node;
 }
 
-function exportNodeAsSvg(node: SceneNode): Promise<SvgNodeData | null> {
-  return (node as FrameNode)
-    .exportAsync({ format: "SVG", contentsOnly: false })
-    .then((svgBytes) => {
-      // Convert Uint8Array to string using TextDecoder for better performance
-      const svgString = String.fromCharCode(...svgBytes);
-      return {
-        id: node.id,
-        name: node.name || "Untitled",
-        svg: svgString,
-      };
-    })
-    .catch((error) => {
-      console.error("Failed to export SVG:", error);
-      return null;
+async function exportNodeAsSvg(node: SceneNode): Promise<FigmaNodeData | null> {
+  try {
+    const svgBytes = await (node as ExportMixin).exportAsync({
+      format: "SVG",
+      contentsOnly: false,
     });
-}
 
-function compressSvgs(
-  svgs: SvgNodeData[],
-  presetId?: string
-): Promise<unknown[]> {
-  // Find preset
-  const preset = compressionPresets.find((p) => p.id === presetId);
-  const plugins = preset?.plugins ?? ["preset-default"];
-
-  // Process plugins for SVGO config
-  const processedPlugins: unknown[] = [];
-  for (const plugin of plugins) {
-    if (typeof plugin === "string") {
-      processedPlugins.push(plugin);
-    } else {
-      processedPlugins.push({ name: plugin.name, active: plugin.active });
+    // Convert Uint8Array to string (TextDecoder not available in Figma sandbox)
+    let svgString = "";
+    for (const byte of svgBytes) {
+      svgString += String.fromCharCode(byte);
     }
-  }
 
-  const svgoConfig = {
-    multipass: true,
-    plugins: processedPlugins,
-  };
-
-  // For now, return the uncompressed SVGs
-  // In a real implementation, compression would happen in the UI via Web Worker
-  const results: unknown[] = [];
-  for (const svgNode of svgs) {
-    results.push({
-      id: svgNode.id,
-      layerName: svgNode.name,
-      nodeId: svgNode.id,
-      originalSvg: svgNode.svg,
-      compressedSvg: svgNode.svg,
-      fileName: `${svgNode.name}.svg`,
-      svgoConfig,
-      originalSize: svgNode.svg.length,
-      compressedSize: svgNode.svg.length,
-      compressionRatio: 0,
-    });
-  }
-
-  return Promise.resolve(results);
-}
-
-function replaceSvgInFigma(nodeId: string, _svgString: string): void {
-  const node = figma.getNodeById(nodeId);
-  if (!node) {
-    figma.notify("Node not found", { error: true });
-    return;
-  }
-  figma.notify("SVG replaced successfully");
-}
-
-function exportAsComponent(nodeId: string): void {
-  const node = figma.getNodeById(nodeId);
-  if (!node) {
-    figma.notify("Node not found", { error: true });
-    return;
-  }
-
-  if (node.type === "COMPONENT" || node.type === "COMPONENT_SET") {
-    figma.notify("Already a component");
-  } else {
-    const component = figma.createComponent();
-    component.name = node.name;
-    figma.notify("Created component from selection");
+    return {
+      id: node.id,
+      nodeId: node.id,
+      name: node.name || "Untitled",
+      svg: svgString,
+    };
+  } catch (error) {
+    console.error(`Failed to export node "${node.name}":`, error);
+    return null;
   }
 }
 
-// Handle selection change
-figma.on("selectionchange", () => {
-  getSelectedSvgs().then((result) => {
-    figma.ui.postMessage({ type: "selection-changed", data: result });
-  });
-});
+// ============================================================================
+// Preset Storage (Figma Plugin Data)
+// ============================================================================
+
+function loadPresets(): Preset[] {
+  const data = figma.root.getPluginData(PLUGIN_DATA_KEY);
+
+  if (!data) {
+    // No saved presets, return defaults
+    return [...DEFAULT_PRESETS];
+  }
+
+  try {
+    const savedPresets: Preset[] = JSON.parse(data);
+
+    // Merge with defaults (ensure defaults are always present)
+    const mergedPresets = [...DEFAULT_PRESETS];
+
+    for (const preset of savedPresets) {
+      // Only add non-default presets from storage
+      if (!preset.isDefault) {
+        mergedPresets.push(preset);
+      }
+    }
+
+    return mergedPresets;
+  } catch (error) {
+    console.error("Failed to parse presets:", error);
+    return [...DEFAULT_PRESETS];
+  }
+}
+
+function savePresets(presets: Preset[]): void {
+  const data = JSON.stringify(presets);
+  figma.root.setPluginData(PLUGIN_DATA_KEY, data);
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+function sendError(message: string, details?: string): void {
+  emit<ErrorHandler>("ERROR", message, details);
+  figma.notify(message, { error: true });
+}

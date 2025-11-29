@@ -1,11 +1,10 @@
 {
-  "name": "Tiny SVG - SVG Optimizer",
-  "id": "com.tiny-svg.figma",
   "api": "1.0.0",
+  "editorType": [
+    "figma"
+  ],
+  "id": "figma-plugin",
+  "name": "figma-plugin",
   "main": "dist/plugin.js",
-  "ui": "dist/index.html",
-  "editorType": ["figma"],
-  "networkAccess": {
-    "allowedDomains": ["none"]
-  }
+  "ui": "dist/index.html"
 }

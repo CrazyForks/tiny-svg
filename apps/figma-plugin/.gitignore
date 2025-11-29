@@ -31,3 +31,4 @@ pnpm-debug.log*
 
 # Figma plugin specific
 .figma-plugin/
+*.css.d.ts
