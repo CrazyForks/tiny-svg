@@ -1,8 +1,6 @@
 {
   "api": "1.0.0",
-  "editorType": [
-    "figma"
-  ],
+  "editorType": ["figma"],
   "id": "figma-plugin",
   "name": "figma-plugin",
   "main": "dist/plugin.js",

@@ -17,15 +17,9 @@
       "!**/.intlayer"
     ]
   },
-  "extends": [
-    "ultracite",
-    "ultracite/core"
-  ],
+  "extends": ["ultracite", "ultracite/core"],
   "javascript": {
-    "globals": [
-      "figma",
-      "__html__"
-    ]
+    "globals": ["figma", "__html__"]
   },
   "linter": {
     "rules": {
@@ -56,11 +50,7 @@
         "noConsole": {
           "level": "info",
           "options": {
-            "allow": [
-              "warn",
-              "info",
-              "error"
-            ]
+            "allow": ["warn", "info", "error"]
           }
         }
       },

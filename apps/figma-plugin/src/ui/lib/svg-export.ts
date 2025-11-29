@@ -23,6 +23,8 @@ export async function exportAsZip(items: SvgItem[]): Promise<void> {
   URL.revokeObjectURL(url);
 }
 
+const SVG_MATCHER = /<svg[^>]*>([\s\S]*)<\/svg>/;
+
 /**
  * Export SVGs as a sprite sheet (single SVG with symbols + JSON metadata)
  */
@@ -32,7 +34,7 @@ export async function exportAsSpriteSheet(items: SvgItem[]): Promise<void> {
     .map((item, index) => {
       const svg = item.compressedSvg || item.originalSvg;
       // Extract SVG content (remove <svg> wrapper)
-      const match = svg.match(/<svg[^>]*>([\s\S]*)<\/svg>/);
+      const match = svg.match(SVG_MATCHER);
       const content = match ? match[1] : svg;
 
       return `  <symbol id="icon-${index}" viewBox="0 0 24 24">

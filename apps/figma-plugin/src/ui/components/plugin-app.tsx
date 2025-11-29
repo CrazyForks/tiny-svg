@@ -2,9 +2,10 @@ import { Toaster } from "sonner";
 import { Button } from "@/ui/components/base/button";
 import { EmptyState } from "@/ui/components/empty-state";
 import { Footer } from "@/ui/components/footer";
-import { Header } from "@/ui/components/header";
+import { Header } from "@/ui/components/Header";
 import { SvgItem } from "@/ui/components/items/svg-item";
 import { PluginLayout } from "@/ui/components/layout/plugin-layout";
+import { SettingsDrawer } from "@/ui/components/settings/settings-drawer";
 import { useFigmaMessages } from "@/ui/hooks/use-figma-messages";
 import { usePluginStore } from "@/ui/store/plugin-store";
 
@@ -75,6 +76,7 @@ export function PluginApp() {
         )}
       </PluginLayout>
 
+      <SettingsDrawer />
       <Toaster position="bottom-center" />
     </>
   );
