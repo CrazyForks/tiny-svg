@@ -24,6 +24,13 @@
 - **PWA** - Installable, offline-capable with auto-caching
 - **i18n** - English, Chinese, Korean, German, French
 
+#### Home Page
+![Home Page](./docs/images/home.webp)
+
+#### Optimize Page
+![Optimize Page](./docs/images/optimize.webp)
+![Optimize Page Code](./docs/images/optimize-code.webp)
+
 ### Figma Plugin
 - **Native Integration** - Optimize SVGs directly in Figma
 - **Batch Processing** - Handle multiple SVG layers at once
@@ -32,14 +39,8 @@
 - **In-place Replacement** - Update SVGs directly in your Figma designs
 - **Code Export** - Generate framework-specific code within Figma
 
-## Screenshots
-
-### Home Page
-![Home Page](./docs/images/home.webp)
-
-### Optimize Page
-![Optimize Page](./docs/images/optimize.webp)
-![Optimize Page Code](./docs/images/optimize-code.webp)
+#### Screenshots
+![Plugin](./docs/images/figma-plugin.webp)
 
 ## Quick Start
 
