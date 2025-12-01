@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@tiny-svg/ui/components/select";
 import { type ReactNode, useEffect, useState } from "react";
+import { ItemSizeDisplay } from "@/ui/components/items/item-size-display";
 import { generateThumbnail } from "@/ui/lib/thumbnail";
 import { thumbnailCache } from "@/ui/lib/thumbnail-cache";
 import type { SvgItem } from "@/ui/store";
@@ -14,6 +15,7 @@ import { usePluginStore } from "@/ui/store";
 interface BaseItemProps {
   item: SvgItem;
   showPresetSelector?: boolean;
+  sizeDisplayMode?: "full" | "compression-only";
   actions: ReactNode;
   onThumbnailClick?: () => void;
 }
@@ -21,6 +23,7 @@ interface BaseItemProps {
 export function BaseItem({
   item,
   showPresetSelector = true,
+  sizeDisplayMode = "full",
   actions,
   onThumbnailClick,
 }: BaseItemProps) {
@@ -56,26 +59,6 @@ export function BaseItem({
     updateItem(item.id, { preset: presetId });
   };
 
-  const formatSize = (bytes: number | undefined): string => {
-    if (!bytes) {
-      return "-";
-    }
-    if (bytes < 1024) {
-      return `${bytes}B`;
-    }
-    if (bytes < 1024 * 1024) {
-      return `${(bytes / 1024).toFixed(1)}KB`;
-    }
-    return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
-  };
-
-  const formatCompressionRatio = (ratio: number | undefined): string => {
-    if (!ratio) {
-      return "";
-    }
-    return `(-${Math.round(ratio * 100)}%)`;
-  };
-
   const renderThumbnail = () => {
     if (isLoadingThumbnail) {
       return <div className="size-full animate-pulse bg-muted" />;
@@ -102,7 +85,7 @@ export function BaseItem({
     <div className="flex gap-2 rounded-lg border border-border bg-background p-2">
       <button
         aria-label={`Preview ${item.name}`}
-        className="size-12 shrink-0 cursor-pointer overflow-hidden rounded bg-foreground/10 p-1 transition-colors hover:border-ring"
+        className="size-[60px] shrink-0 cursor-pointer overflow-hidden rounded bg-foreground/10 p-1 transition-colors hover:border-ring"
         onClick={onThumbnailClick}
         type="button"
       >
@@ -118,13 +101,13 @@ export function BaseItem({
           {showPresetSelector && (
             <Select onValueChange={handlePresetChange} value={item.preset}>
               <SelectTrigger
-                className="w-fit rounded-lg px-2 py-0"
+                className="w-[72px] rounded-lg px-1.5 py-0"
                 onClick={(e) => e.stopPropagation()}
                 size="xxs"
               >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="rounded-lg">
+              <SelectContent className="min-w-[72px] rounded-lg">
                 <SelectItem
                   className="rounded-md py-1 pr-4 pl-1 text-xs"
                   value="inherit"
@@ -145,27 +128,17 @@ export function BaseItem({
           )}
 
           <div className="text-muted-foreground text-xs">
-            {item.compressedSize ? (
-              <>
-                <span className="line-through opacity-70">
-                  {formatSize(item.originalSize)}
-                </span>
-                {" → "}
-                <span className="font-medium text-foreground">
-                  {formatSize(item.compressedSize)}
-                </span>{" "}
-                <span className="font-semibold text-success">
-                  {formatCompressionRatio(item.compressionRatio)}
-                </span>
-              </>
-            ) : (
-              <span>{formatSize(item.originalSize)}</span>
-            )}
+            <ItemSizeDisplay
+              compressedSize={item.compressedSize}
+              compressionRatio={item.compressionRatio}
+              mode={sizeDisplayMode}
+              originalSize={item.originalSize}
+            />
           </div>
         </div>
       </div>
 
-      <div className="flex gap-1">{actions}</div>
+      {actions}
     </div>
   );
 }

@@ -25,7 +25,14 @@
     "rules": {
       "nursery": {
         "noReactForwardRef": "off",
-        "useMaxParams": "off"
+        "useMaxParams": "off",
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cn", "cva", "tw", "tw.*"]
+          }
+        }
       },
       "style": {
         "noHeadElement": "off",

@@ -117,7 +117,7 @@ function CodeViewer({
   const LINE_KEY_PREVIEW_LENGTH = 20;
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto py-1.5">
       <table className="m-0 w-full border-separate border-spacing-0 overflow-x-auto border-0 font-mono text-[0.8rem]">
         <tbody className="box-border w-full">
           {codeLines.map((line, index) => {
@@ -197,7 +197,7 @@ function DiffViewer({
   }
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 overflow-auto py-1.5">
       <Diff
         fileName="diff"
         hunks={file.hunks}

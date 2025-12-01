@@ -4,6 +4,8 @@ import { Toaster } from "sonner";
 import { EmptyState } from "@/ui/components/empty-state";
 import { Footer } from "@/ui/components/footer";
 import { Header } from "@/ui/components/header";
+import { CodeItem } from "@/ui/components/items/code-item";
+import { ImageItem } from "@/ui/components/items/image-item";
 import { SvgItem } from "@/ui/components/items/svg-item";
 import { PluginLayout } from "@/ui/components/layout/plugin-layout";
 import { useFigmaMessages } from "@/ui/hooks/use-figma-messages";
@@ -28,6 +30,7 @@ export function PluginApp() {
     compressionProgress,
     clearError,
     openPreview,
+    activeTab,
   } = usePluginStore();
 
   useFigmaMessages();
@@ -78,15 +81,29 @@ export function PluginApp() {
 
         {hasItems ? (
           <div className="flex flex-col gap-2">
-            {items.map((item) => (
-              <SvgItem
-                item={item}
-                key={item.id}
-                onPreview={() => {
-                  openPreview(item.id);
-                }}
-              />
-            ))}
+            {items.map((item) => {
+              let ItemComponent:
+                | typeof SvgItem
+                | typeof ImageItem
+                | typeof CodeItem;
+              if (activeTab === "svg") {
+                ItemComponent = SvgItem;
+              } else if (activeTab === "image") {
+                ItemComponent = ImageItem;
+              } else {
+                ItemComponent = CodeItem;
+              }
+
+              return (
+                <ItemComponent
+                  item={item}
+                  key={item.id}
+                  onPreview={() => {
+                    openPreview(item.id);
+                  }}
+                />
+              );
+            })}
           </div>
         ) : (
           <EmptyState />
