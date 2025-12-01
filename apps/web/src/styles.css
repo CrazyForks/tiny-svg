@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @plugin "@egoist/tailwindcss-icons";
 
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -264,8 +266,8 @@ body {
 }
 
 /* Fallback for SVGs without explicit width/height attributes */
-.svg-preview-container > div > svg:not([width]):not([height]),
-.svg-preview-container svg:not([width]):not([height]) {
+.svg-preview-container svg:not([width]):not([height]),
+.svg-preview-container > div > svg:not([width]):not([height]) {
   width: 200px;
   height: 200px;
 }

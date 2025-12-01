@@ -18,18 +18,29 @@
     ]
   },
   "extends": ["ultracite", "ultracite/core"],
+  "javascript": {
+    "globals": ["figma", "__html__"]
+  },
   "linter": {
     "rules": {
       "nursery": {
         "noReactForwardRef": "off",
-        "useMaxParams": "off"
+        "useMaxParams": "off",
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cn", "cva", "tw", "tw.*"]
+          }
+        }
       },
       "style": {
         "noHeadElement": "off",
         "useFilenamingConvention": "off",
         "useConsistentTypeDefinitions": "off",
         "useUnifiedTypeSignatures": "off",
-        "noMagicNumbers": "off"
+        "noMagicNumbers": "off",
+        "noNamespace": "off"
       },
       "performance": {
         "noNamespaceImport": "off",
@@ -55,7 +66,10 @@
         "noUnknownTypeSelector": "off"
       },
       "a11y": {
-        "useSemanticElements": "off"
+        "useSemanticElements": "off",
+        "noNoninteractiveElementInteractions": "off",
+        "useKeyWithMouseEvents": "off",
+        "useKeyWithClickEvents": "off"
       }
     }
   }
