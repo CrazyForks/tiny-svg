@@ -14,6 +14,7 @@
 
 ## Features
 
+### Web Application
 - **SVG Optimization** - SVGO-powered with 40+ configurable plugins
 - **Code Generation** - React (JSX/TSX), Vue, Svelte, React Native, Flutter
 - **Transformations** - Rotate, flip, resize with proportional scaling
@@ -21,7 +22,15 @@
 - **Visual Preview** - Real-time preview with zoom (20%-400%) and pan
 - **Export** - PNG/JPEG with customizable dimensions (0.25x-8x scale)
 - **PWA** - Installable, offline-capable with auto-caching
-- **i18n** - English, Chinese, Korean, German
+- **i18n** - English, Chinese, Korean, German, French
+
+### Figma Plugin
+- **Native Integration** - Optimize SVGs directly in Figma
+- **Batch Processing** - Handle multiple SVG layers at once
+- **Real-time Preview** - Side-by-side diff viewer with syntax highlighting
+- **Compression Presets** - Default, Aggressive, Minimal, or Custom configurations
+- **In-place Replacement** - Update SVGs directly in your Figma designs
+- **Code Export** - Generate framework-specific code within Figma
 
 ## Screenshots
 
@@ -56,11 +65,16 @@ pnpm install
 # Start all workspace apps
 pnpm dev
 
-# Or start only the web app
-pnpm dev:web
+# Or start specific apps
+pnpm dev:web          # Web app only (http://localhost:3001)
+pnpm dev:figma        # Figma plugin in watch mode
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser.
+**For Figma Plugin development:**
+1. Run `pnpm build:packages` to build shared packages
+2. Run `pnpm dev:figma` to start development mode
+3. In Figma Desktop: **Plugins → Development → Import plugin from manifest...**
+4. Select `apps/figma-plugin/manifest.json`
 
 ### Build
 
@@ -68,8 +82,13 @@ Open [http://localhost:3001](http://localhost:3001) in your browser.
 # Build all workspace packages
 pnpm build
 
-# Preview the production build locally
-pnpm --filter web serve
+# Build specific targets
+pnpm build:packages   # Shared packages only
+pnpm build:figma      # Figma plugin
+pnpm --filter @tiny-svg/web build   # Web app only
+
+# Preview the web app production build
+pnpm --filter @tiny-svg/web serve
 ```
 
 ### Code Quality
@@ -109,21 +128,63 @@ pnpm check-types
 
 ## Project Structure
 
+This is a **pnpm monorepo** with shared packages for code reuse across applications.
+
 ```
-apps/web/src/
-├── components/     # React components
-├── contents/       # i18n definitions (*.content.ts)
-├── hooks/          # Custom React hooks
-├── lib/            # Utilities (SVGO config, code generators)
-├── routes/         # TanStack Start file-based routing
-│   └── {-$locale}/ # Locale-prefixed routes
-├── store/          # Zustand stores
-└── workers/        # Web Workers (svgo, prettier, code-generator)
+tiny-svg/
+├── apps/
+│   ├── web/                    # Web application (TanStack Start)
+│   │   ├── src/
+│   │   │   ├── components/         # React components
+│   │   │   ├── contents/           # i18n definitions (*.content.ts)
+│   │   │   ├── hooks/              # Custom React hooks
+│   │   │   ├── lib/                # Utilities and helpers
+│   │   │   ├── routes/             # File-based routing
+│   │   │   │   └── {-$locale}/     # Locale-prefixed routes
+│   │   │   ├── store/              # Zustand stores
+│   │   │   └── workers/            # Web Workers (optimization, formatting)
+│   │   └── package.json
+│   │
+│   └── figma-plugin/           # Figma plugin
+│       ├── src/
+│       │   ├── plugin.ts           # Plugin sandbox code (Figma API)
+│       │   └── ui/                 # React UI components
+│       ├── manifest.json           # Figma plugin manifest
+│       └── package.json
+│
+└── packages/                   # Shared packages
+    ├── svg/                        # @tiny-svg/svg
+    │   └── src/                    # SVGO config, presets, utilities
+    ├── code-generators/            # @tiny-svg/code-generators
+    │   └── src/                    # Framework code generators (React, Vue, Svelte, etc.)
+    ├── ui/                         # @tiny-svg/ui
+    │   └── src/                    # Shared React components (diff viewer, etc.)
+    └── utils/                      # @tiny-svg/utils
+        └── src/                    # Utilities (clipboard, image export, etc.)
 ```
+
+### Package Dependencies
+
+- **Web app** depends on: `@tiny-svg/svg`, `@tiny-svg/code-generators`, `@tiny-svg/ui`
+- **Figma plugin** depends on: `@tiny-svg/svg`, `@tiny-svg/code-generators`, `@tiny-svg/ui`, `@tiny-svg/utils`
+
+**Important:** After modifying any package in `packages/`, run `pnpm build:packages` before building apps.
 
 ## Deployment
 
 Deployed on **Vercel** for full SSR support. Cloudflare Workers not supported due to MDX runtime restrictions (`eval()` prohibited).
+
+## Applications
+
+### 🌐 Web Application
+[Visit Tiny SVG](https://tiny-svg.vercel.app)
+
+A full-featured web application for SVG optimization with SSR, PWA support, and i18n.
+
+### 🎨 Figma Plugin
+**Status:** In Development
+
+Optimize SVGs directly within Figma. See [apps/figma-plugin/README.md](apps/figma-plugin/README.md) for details.
 
 ## TODO
 
@@ -132,6 +193,7 @@ Deployed on **Vercel** for full SSR support. Cloudflare Workers not supported du
 - [ ] Interactive plugin demos - Visual examples for SVGO plugins
 - [ ] SVG sprite generator - Combine multiple SVGs into sprite sheets
 - [ ] Accessibility checker - Analyze and suggest SVG accessibility improvements
+- [ ] Publish Figma plugin to Figma Community
 
 ## Contributing
 
