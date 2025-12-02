@@ -1,5 +1,13 @@
 import { Button } from "@tiny-svg/ui/components/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@tiny-svg/ui/components/context-menu";
 import { useState } from "react";
+import { useIntlayer } from "react-intlayer";
 import { SvgSizeAdjuster } from "@/components/svg-size-adjuster";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useLongPress } from "@/hooks/use-long-press";
@@ -17,6 +25,8 @@ type SvgPreviewProps = {
   svg: string;
   title: string;
   className?: string;
+  onCopy?: () => void;
+  onDownload?: () => void;
 };
 
 const ZOOM_SCALE_DIVISOR = 100;
@@ -55,7 +65,122 @@ const BACKGROUND_STYLES: Record<
   },
 };
 
-export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
+type CanvasMenuProps = {
+  zoom: number;
+  minZoom: number;
+  maxZoom: number;
+  backgroundStyle: BackgroundStyle;
+  onCycleBackground: () => void;
+  onZoomOut: () => void;
+  onZoomIn: () => void;
+  onZoomReset: () => void;
+};
+
+function CanvasContextMenu({
+  zoom,
+  minZoom,
+  maxZoom,
+  backgroundStyle,
+  onCycleBackground,
+  onZoomOut,
+  onZoomIn,
+  onZoomReset,
+}: CanvasMenuProps) {
+  const { preview } = useIntlayer("optimize");
+
+  return (
+    <>
+      <ContextMenuItem onClick={onCycleBackground}>
+        <i className={cn(BACKGROUND_STYLES[backgroundStyle].icon, "size-4")} />
+        {preview.toggleBackground}
+      </ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem disabled={zoom <= minZoom} onClick={onZoomOut}>
+        <i className="i-hugeicons-zoom-out-area size-4" />
+        {preview.zoomOut}
+      </ContextMenuItem>
+      <ContextMenuItem disabled={zoom >= maxZoom} onClick={onZoomIn}>
+        <i className="i-hugeicons-zoom-in-area size-4" />
+        {preview.zoomIn}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onZoomReset}>
+        <i className="i-hugeicons-image-actual-size size-4" />
+        {preview.resetZoom}
+      </ContextMenuItem>
+    </>
+  );
+}
+
+type SvgMenuProps = {
+  showViewBoxOutline: boolean;
+  onCopy?: () => void;
+  onDownload?: () => void;
+  onRotate: () => void;
+  onFlipHorizontal: () => void;
+  onFlipVertical: () => void;
+  onToggleOutline: () => void;
+};
+
+function SvgContextMenu({
+  showViewBoxOutline,
+  onCopy,
+  onDownload,
+  onRotate,
+  onFlipHorizontal,
+  onFlipVertical,
+  onToggleOutline,
+}: SvgMenuProps) {
+  const { preview } = useIntlayer("optimize");
+
+  return (
+    <>
+      <ContextMenuItem disabled={!onCopy} onClick={onCopy}>
+        <i className="i-hugeicons-copy-01 size-4" />
+        {preview.copy}
+      </ContextMenuItem>
+      <ContextMenuItem disabled={!onDownload} onClick={onDownload}>
+        <i className="i-hugeicons-download-01 size-4" />
+        {preview.download}
+      </ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem onClick={onRotate}>
+        <i className="i-hugeicons-rotate-clockwise size-4" />
+        {preview.rotate}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onFlipHorizontal}>
+        <i className="i-hugeicons-image-flip-horizontal size-4" />
+        {preview.flipHorizontal}
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onFlipVertical}>
+        <i className="i-hugeicons-image-flip-vertical size-4" />
+        {preview.flipVertical}
+      </ContextMenuItem>
+      <ContextMenuSeparator />
+      <ContextMenuItem onClick={onToggleOutline}>
+        <i
+          className={cn(
+            "size-4",
+            showViewBoxOutline
+              ? "i-hugeicons-border-none-01"
+              : "i-hugeicons-border-none-02"
+          )}
+        />
+        {showViewBoxOutline
+          ? preview.hideOutlineShort
+          : preview.showOutlineShort}
+      </ContextMenuItem>
+    </>
+  );
+}
+
+export function SvgPreview({
+  svg,
+  title,
+  className,
+  onCopy,
+  onDownload,
+}: SvgPreviewProps) {
+  const { preview } = useIntlayer("optimize");
   const {
     zoom,
     pan,
@@ -82,6 +207,9 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
   const [showViewBoxOutline, setShowViewBoxOutline] = useLocalStorage(
     "svg-preview-viewbox-outline",
     false
+  );
+  const [contextMenuTarget, setContextMenuTarget] = useState<"canvas" | "svg">(
+    "canvas"
   );
   const { applyTransformation } = useSvgStore();
 
@@ -132,6 +260,24 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
     setShowSizeAdjuster(false);
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    const svgContainer = button.querySelector(".svg-preview-container > div");
+
+    if (svgContainer) {
+      const svgRect = svgContainer.getBoundingClientRect();
+      const isWithinSvg =
+        e.clientX >= svgRect.left &&
+        e.clientX <= svgRect.right &&
+        e.clientY >= svgRect.top &&
+        e.clientY <= svgRect.bottom;
+
+      setContextMenuTarget(isWithinSvg ? "svg" : "canvas");
+    } else {
+      setContextMenuTarget("canvas");
+    }
+  };
+
   if (!svg) {
     return (
       <div className={cn("flex h-full flex-col", className)}>
@@ -139,7 +285,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <h3 className="font-medium text-sm">{title}</h3>
         </div>
         <div className="flex flex-1 items-center justify-center text-muted-foreground">
-          No SVG to preview
+          {preview.noSvg}
         </div>
       </div>
     );
@@ -153,7 +299,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <Button
             onClick={handleRotate}
             size="sm"
-            title="Rotate 90°"
+            title={String(preview.rotate)}
             type="button"
             variant="outline"
           >
@@ -162,7 +308,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <Button
             onClick={handleFlipHorizontal}
             size="sm"
-            title="Flip horizontal"
+            title={String(preview.flipHorizontal)}
             type="button"
             variant="outline"
           >
@@ -171,7 +317,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <Button
             onClick={handleFlipVertical}
             size="sm"
-            title="Flip vertical"
+            title={String(preview.flipVertical)}
             type="button"
             variant="outline"
           >
@@ -181,7 +327,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
             <Button
               onClick={() => setShowSizeAdjuster(!showSizeAdjuster)}
               size="sm"
-              title="Adjust size"
+              title={String(preview.adjustSize)}
               type="button"
               variant="outline"
             >
@@ -199,7 +345,9 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <Button
             onClick={() => setShowViewBoxOutline(!showViewBoxOutline)}
             size="sm"
-            title="Show viewBox outline"
+            title={String(
+              showViewBoxOutline ? preview.hideOutline : preview.showOutline
+            )}
             type="button"
             variant="outline"
           >
@@ -228,7 +376,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
             disabled={zoom <= minZoom}
             {...zoomOutLongPress}
             size="sm"
-            title="Zoom out (hold for continuous zoom)"
+            title={String(preview.zoomOut)}
             type="button"
             variant="outline"
           >
@@ -241,7 +389,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
             disabled={zoom >= maxZoom}
             {...zoomInLongPress}
             size="sm"
-            title="Zoom in (hold for continuous zoom)"
+            title={String(preview.zoomIn)}
             type="button"
             variant="outline"
           >
@@ -250,7 +398,7 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           <Button
             onClick={handleZoomReset}
             size="sm"
-            title="Reset zoom"
+            title={String(preview.resetZoom)}
             type="button"
             variant="outline"
           >
@@ -258,40 +406,69 @@ export function SvgPreview({ svg, title, className }: SvgPreviewProps) {
           </Button>
         </div>
       </div>
-      <button
-        aria-label="SVG preview canvas - use mouse wheel to zoom, click and drag to pan"
-        className={cn(
-          "relative flex-1 overflow-hidden border-0 p-0 outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          BACKGROUND_STYLES[backgroundStyle].className,
-          isDragging ? "cursor-grabbing" : "cursor-grab"
-        )}
-        onMouseDown={handleMouseDown}
-        onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        ref={containerRef}
-        type="button"
-      >
-        <div
-          className="svg-preview-container absolute inset-0 flex items-center justify-center"
-          style={{
-            transform: `translate(${pan.x}px, ${pan.y}px)`,
-            transition: isDragging ? "none" : "transform 0.1s ease-out",
-          }}
-        >
-          <div
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <button
+            aria-label={String(preview.canvasAriaLabel)}
             className={cn(
-              "pointer-events-none relative select-none",
-              showViewBoxOutline && "svg-view-outline"
+              "relative flex-1 overflow-hidden border-0 p-0 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              BACKGROUND_STYLES[backgroundStyle].className,
+              isDragging ? "cursor-grabbing" : "cursor-grab"
             )}
-            dangerouslySetInnerHTML={{ __html: svg }}
-            style={{
-              transform: `scale(${zoom / ZOOM_SCALE_DIVISOR})`,
-              transition: "transform 0.2s ease-out",
-            }}
-          />
-        </div>
-      </button>
+            onContextMenu={handleContextMenu}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            ref={containerRef}
+            type="button"
+          >
+            <div
+              className="svg-preview-container absolute inset-0 flex items-center justify-center"
+              style={{
+                transform: `translate(${pan.x}px, ${pan.y}px)`,
+                transition: isDragging ? "none" : "transform 0.1s ease-out",
+              }}
+            >
+              <div
+                className={cn(
+                  "pointer-events-none relative select-none",
+                  showViewBoxOutline && "svg-view-outline"
+                )}
+                dangerouslySetInnerHTML={{ __html: svg }}
+                style={{
+                  transform: `scale(${zoom / ZOOM_SCALE_DIVISOR})`,
+                  transition: "transform 0.2s ease-out",
+                }}
+              />
+            </div>
+          </button>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          {contextMenuTarget === "canvas" ? (
+            <CanvasContextMenu
+              backgroundStyle={backgroundStyle}
+              maxZoom={maxZoom}
+              minZoom={minZoom}
+              onCycleBackground={cycleBackground}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onZoomReset={handleZoomReset}
+              zoom={zoom}
+            />
+          ) : (
+            <SvgContextMenu
+              onCopy={onCopy}
+              onDownload={onDownload}
+              onFlipHorizontal={handleFlipHorizontal}
+              onFlipVertical={handleFlipVertical}
+              onRotate={handleRotate}
+              onToggleOutline={() => setShowViewBoxOutline(!showViewBoxOutline)}
+              showViewBoxOutline={showViewBoxOutline}
+            />
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
     </div>
   );
 }

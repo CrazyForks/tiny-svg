@@ -21,6 +21,10 @@ type OptimizeTabsProps = {
   componentName: string;
   generatedCodes: Map<string, string>;
   ui: any;
+  onCopyOriginal: () => Promise<void>;
+  onDownloadOriginal: () => void;
+  onCopyCompressed: () => Promise<void>;
+  onDownloadCompressed: () => void;
   onTabChange: (tab: string) => void;
 };
 
@@ -34,6 +38,10 @@ export function OptimizeTabs({
   componentName,
   generatedCodes,
   ui,
+  onCopyOriginal,
+  onDownloadOriginal,
+  onCopyCompressed,
+  onDownloadCompressed,
   onTabChange,
 }: OptimizeTabsProps) {
   return (
@@ -69,6 +77,8 @@ export function OptimizeTabs({
         >
           <SvgPreview
             className="flex-1"
+            onCopy={onCopyOriginal}
+            onDownload={onDownloadOriginal}
             svg={originalSvg}
             title="Original SVG"
           />
@@ -82,6 +92,8 @@ export function OptimizeTabs({
         {compressedSvg ? (
           <SvgPreview
             className="flex-1"
+            onCopy={onCopyCompressed}
+            onDownload={onDownloadCompressed}
             svg={compressedSvg}
             title="Optimized SVG"
           />

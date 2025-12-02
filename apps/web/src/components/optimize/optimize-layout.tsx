@@ -31,6 +31,10 @@ type OptimizeLayoutProps = {
   onFileUpload: (file: File) => Promise<void>;
   onCopy: () => Promise<void>;
   onDownload: () => void;
+  onCopyOriginal: () => Promise<void>;
+  onDownloadOriginal: () => void;
+  onCopyCompressed: () => Promise<void>;
+  onDownloadCompressed: () => void;
   onToggleSettings: () => void;
   onToggleMobileSettings: () => void;
   onToggleHistoryPanel: () => void;
@@ -64,6 +68,10 @@ export function OptimizeLayout({
   onFileUpload,
   onCopy,
   onDownload,
+  onCopyOriginal,
+  onDownloadOriginal,
+  onCopyCompressed,
+  onDownloadCompressed,
   onToggleSettings,
   onToggleMobileSettings,
   onToggleHistoryPanel,
@@ -113,6 +121,10 @@ export function OptimizeLayout({
               componentName={componentName}
               compressedSvg={compressedSvg}
               generatedCodes={generatedCodes}
+              onCopyCompressed={onCopyCompressed}
+              onCopyOriginal={onCopyOriginal}
+              onDownloadCompressed={onDownloadCompressed}
+              onDownloadOriginal={onDownloadOriginal}
               onTabChange={onTabChange}
               originalSvg={originalSvg}
               prettifiedCompressed={prettifiedCompressed}

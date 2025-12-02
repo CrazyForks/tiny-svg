@@ -160,7 +160,30 @@ export function useOptimizePage() {
     fileName
   );
 
-  const handleCopy = useCallback(async () => {
+  const handleCopyOriginal = useCallback(async () => {
+    try {
+      await copyToClipboard(originalSvg);
+      toast.success(messages?.copySuccess || "Copied to clipboard!");
+    } catch {
+      toast.error(messages?.copyError || "Failed to copy to clipboard");
+    }
+  }, [originalSvg, messages?.copySuccess, messages?.copyError]);
+
+  const handleDownloadOriginal = useCallback(() => {
+    try {
+      downloadSvg(originalSvg, fileName);
+      toast.success(messages?.downloadSuccess || "Downloaded successfully!");
+    } catch {
+      toast.error(messages?.downloadError || "Failed to download file");
+    }
+  }, [
+    originalSvg,
+    fileName,
+    messages?.downloadSuccess,
+    messages?.downloadError,
+  ]);
+
+  const handleCopyCompressed = useCallback(async () => {
     try {
       await copyToClipboard(compressedSvg);
       toast.success(messages?.copySuccess || "Copied to clipboard!");
@@ -169,7 +192,7 @@ export function useOptimizePage() {
     }
   }, [compressedSvg, messages?.copySuccess, messages?.copyError]);
 
-  const handleDownload = useCallback(() => {
+  const handleDownloadCompressed = useCallback(() => {
     try {
       const newFileName = fileName.replace(".svg", ".optimized.svg");
       downloadSvg(compressedSvg, newFileName);
@@ -278,8 +301,12 @@ export function useOptimizePage() {
 
     // Handlers
     onFileUpload: handleFileUpload,
-    onCopy: handleCopy,
-    onDownload: handleDownload,
+    onCopy: handleCopyCompressed,
+    onDownload: handleDownloadCompressed,
+    onCopyOriginal: handleCopyOriginal,
+    onDownloadOriginal: handleDownloadOriginal,
+    onCopyCompressed: handleCopyCompressed,
+    onDownloadCompressed: handleDownloadCompressed,
     onTabChange: setActiveTab,
     onToggleSettings: toggleCollapsed,
     onToggleMobileSettings: toggleMobileSettings,

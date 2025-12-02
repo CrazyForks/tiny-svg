@@ -7,7 +7,7 @@ import {
 } from "@tiny-svg/ui/components/select";
 import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "@/i18n/hooks";
-import { ItemSizeDisplay } from "@/ui/components/items/item-size-display";
+import { ItemSizeDisplay } from "@/ui/components/items/shared/item-size-display";
 import { generateThumbnail } from "@/ui/lib/thumbnail";
 import { thumbnailCache } from "@/ui/lib/thumbnail-cache";
 import type { SvgItem } from "@/ui/store";
