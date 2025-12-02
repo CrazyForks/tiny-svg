@@ -42,18 +42,16 @@ export function BaseItem({
       setIsLoadingThumbnail(false);
     } else {
       setIsLoadingThumbnail(true);
-      const svg = item.compressedSvg || item.originalSvg;
-      generateThumbnail(svg, 48)
-        .then((url) => {
-          thumbnailCache.set(item.id, url);
-          setThumbnail(url);
-        })
-        .catch((error) => {
-          console.error("Failed to generate thumbnail:", error);
-        })
-        .finally(() => {
-          setIsLoadingThumbnail(false);
-        });
+      try {
+        const svg = item.compressedSvg || item.originalSvg;
+        const url = generateThumbnail(svg);
+        thumbnailCache.set(item.id, url);
+        setThumbnail(url);
+      } catch (error) {
+        console.error("Failed to generate thumbnail:", error);
+      } finally {
+        setIsLoadingThumbnail(false);
+      }
     }
   }, [item.id, item.compressedSvg, item.originalSvg]);
 

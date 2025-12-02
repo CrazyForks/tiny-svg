@@ -16,7 +16,7 @@ export async function exportNodeAsSvg(
   try {
     const svgBytes = await (node as ExportMixin).exportAsync({
       format: "SVG",
-      contentsOnly: false,
+      contentsOnly: true,
     });
 
     // Convert Uint8Array to string (TextDecoder not available in Figma sandbox)

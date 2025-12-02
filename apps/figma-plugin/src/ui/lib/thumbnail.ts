@@ -1,37 +1,16 @@
 /**
  * Thumbnail generation utility
- * Uses shared @tiny-svg/export-utils for canvas operations
+ * Directly uses SVG as data URI for crisp rendering
  */
 
-import { createCanvasFromSvg, getSvgDimensions } from "@tiny-svg/utils";
-
-export async function generateThumbnail(
-  svg: string,
-  size = 48
-): Promise<string> {
+export function generateThumbnail(svg: string): string {
   try {
-    const dimensions = getSvgDimensions(svg);
-    const width = dimensions?.width || size;
-    const height = dimensions?.height || size;
-
-    // Calculate aspect-fit dimensions
-    const aspectRatio = width / height;
-    let thumbWidth = size;
-    let thumbHeight = size;
-
-    if (aspectRatio > 1) {
-      thumbHeight = size / aspectRatio;
-    } else {
-      thumbWidth = size * aspectRatio;
-    }
-
-    // Use shared canvas creation utility from export-utils
-    const canvas = await createCanvasFromSvg(svg, thumbWidth, thumbHeight, {
-      centered: true,
-      canvasSize: size,
-    });
-
-    return canvas.toDataURL("image/png");
+    // Encode SVG as data URI for direct use
+    // This preserves vector quality and transparency
+    const encoded = encodeURIComponent(svg)
+      .replace(/'/g, "%27")
+      .replace(/"/g, "%22");
+    return `data:image/svg+xml,${encoded}`;
   } catch (error) {
     console.error("Failed to generate thumbnail:", error);
     throw error;
