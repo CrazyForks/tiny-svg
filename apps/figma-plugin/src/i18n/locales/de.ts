@@ -117,7 +117,7 @@ export const de: TranslationFile = {
       zoomIn: "Vergrößern",
       resetZoom: "Zoom zurücksetzen",
       prettifyCode: "Code formatieren",
-      copyCode: "Code kopieren",
+      copyCode: "Kopieren",
     },
     codeView: {
       diff: "Diff",

@@ -114,7 +114,7 @@ export const zh: TranslationFile = {
       zoomIn: "放大",
       resetZoom: "重置缩放",
       prettifyCode: "格式化代码",
-      copyCode: "复制代码",
+      copyCode: "复制",
     },
     codeView: {
       diff: "差异",

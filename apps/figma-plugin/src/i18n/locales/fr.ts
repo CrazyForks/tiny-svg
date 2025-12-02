@@ -117,7 +117,7 @@ export const fr: TranslationFile = {
       zoomIn: "Zoomer",
       resetZoom: "Réinitialiser le zoom",
       prettifyCode: "Formater le code",
-      copyCode: "Copier le code",
+      copyCode: "Copier",
     },
     codeView: {
       diff: "Diff",
@@ -188,7 +188,7 @@ export const fr: TranslationFile = {
         unpin: "Détacher",
         pin: "Épingler",
         edit: "Modifier",
-        duplicate: "Dupliquer",
+        duplicate: "Copier",
         delete: "Supprimer",
         cannotDeleteDefault:
           "Le préréglage par défaut ne peut pas être supprimé",

@@ -115,7 +115,7 @@ export const en: TranslationFile = {
       zoomIn: "Zoom in",
       resetZoom: "Reset zoom",
       prettifyCode: "Prettify code",
-      copyCode: "Copy code",
+      copyCode: "Copy",
     },
     codeView: {
       diff: "Diff",
@@ -185,7 +185,7 @@ export const en: TranslationFile = {
         unpin: "Unpin",
         pin: "Pin",
         edit: "Edit",
-        duplicate: "Duplicate",
+        duplicate: "Copy",
         delete: "Delete",
         cannotDeleteDefault: "Default preset cannot be deleted",
       },

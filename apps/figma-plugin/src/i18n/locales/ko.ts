@@ -114,7 +114,7 @@ export const ko: TranslationFile = {
       zoomIn: "확대",
       resetZoom: "확대/축소 재설정",
       prettifyCode: "코드 포맷팅",
-      copyCode: "코드 복사",
+      copyCode: "복사",
     },
     codeView: {
       diff: "차이",
