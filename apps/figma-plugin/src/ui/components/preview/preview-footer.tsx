@@ -7,6 +7,11 @@ import {
   SelectValue,
 } from "@tiny-svg/ui/components/select";
 import { Tabs, TabsList, TabsTrigger } from "@tiny-svg/ui/components/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@tiny-svg/ui/components/tooltip";
 import { cn } from "@tiny-svg/ui/lib/utils";
 import { useTranslation } from "@/i18n/hooks";
 import { BACKGROUND_STYLES } from "@/ui/lib/svg-preview-helpers";
@@ -82,73 +87,101 @@ export function PreviewFooter({
       <div className="flex items-center gap-1">
         {activeTab === "view" && (
           <>
-            <Button
-              className="size-7 rounded-lg p-1"
-              onClick={togglePreviewViewBoxOutline}
-              size="sm"
-              title={
-                showViewBoxOutline
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  onClick={togglePreviewViewBoxOutline}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i
+                    className={cn(
+                      "size-4",
+                      showViewBoxOutline
+                        ? "i-hugeicons-border-none-01"
+                        : "i-hugeicons-border-none-02"
+                    )}
+                  />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {showViewBoxOutline
                   ? t("preview.toolbar.hideOutline")
-                  : t("preview.toolbar.showOutline")
-              }
-              type="button"
-              variant="ghost"
-            >
-              <i
-                className={cn(
-                  "size-4",
-                  showViewBoxOutline
-                    ? "i-hugeicons-border-none-01"
-                    : "i-hugeicons-border-none-02"
-                )}
-              />
-            </Button>
-            <Button
-              className="size-7 rounded-lg p-1"
-              onClick={cyclePreviewBackground}
-              size="sm"
-              title={currentBgStyle.label}
-              type="button"
-              variant="ghost"
-            >
-              <i className={cn(currentBgStyle.icon, "size-4")} />
-            </Button>
+                  : t("preview.toolbar.showOutline")}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  onClick={cyclePreviewBackground}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className={cn(currentBgStyle.icon, "size-4")} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {currentBgStyle.label}
+              </TooltipContent>
+            </Tooltip>
             <div className="mx-1 h-4 w-px bg-border" />
-            <Button
-              className="size-7 rounded-lg p-1"
-              disabled={zoom ? zoom <= (minZoom ?? 20) : true}
-              onClick={onZoomOut}
-              size="sm"
-              title={t("preview.toolbar.zoomOut")}
-              type="button"
-              variant="ghost"
-            >
-              <i className="i-hugeicons-zoom-out-area size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  disabled={zoom ? zoom <= (minZoom ?? 20) : true}
+                  onClick={onZoomOut}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className="i-hugeicons-zoom-out-area size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {t("preview.toolbar.zoomOut")}
+              </TooltipContent>
+            </Tooltip>
             <span className="w-11 text-center font-mono text-muted-foreground text-xs">
               {zoom ?? 100}%
             </span>
-            <Button
-              className="size-7 rounded-lg p-1"
-              disabled={zoom ? zoom >= (maxZoom ?? 800) : true}
-              onClick={onZoomIn}
-              size="sm"
-              title={t("preview.toolbar.zoomIn")}
-              type="button"
-              variant="ghost"
-            >
-              <i className="i-hugeicons-zoom-in-area size-4" />
-            </Button>
-            <Button
-              className="size-7 rounded-lg p-1"
-              onClick={onZoomReset}
-              size="sm"
-              title={t("preview.toolbar.resetZoom")}
-              type="button"
-              variant="ghost"
-            >
-              <i className="i-hugeicons-image-actual-size size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  disabled={zoom ? zoom >= (maxZoom ?? 800) : true}
+                  onClick={onZoomIn}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className="i-hugeicons-zoom-in-area size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {t("preview.toolbar.zoomIn")}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  onClick={onZoomReset}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className="i-hugeicons-image-actual-size size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {t("preview.toolbar.resetZoom")}
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
 
@@ -180,27 +213,41 @@ export function PreviewFooter({
               </SelectContent>
             </Select>
             <div className="mx-1 h-4 w-px bg-border" />
-            <Button
-              className="size-7 rounded-lg p-1"
-              disabled={codeViewMode === "diff" || !canPrettify || isPrettified}
-              onClick={onPrettify}
-              size="sm"
-              title={t("preview.toolbar.prettifyCode")}
-              type="button"
-              variant="ghost"
-            >
-              <i className="i-hugeicons-magic-wand-01 size-4" />
-            </Button>
-            <Button
-              className="size-7 rounded-lg p-1"
-              onClick={onCopy}
-              size="sm"
-              title={t("preview.toolbar.copyCode")}
-              type="button"
-              variant="ghost"
-            >
-              <i className="i-hugeicons-copy-01 size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  disabled={
+                    codeViewMode === "diff" || !canPrettify || isPrettified
+                  }
+                  onClick={onPrettify}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className="i-hugeicons-magic-wand-01 size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {t("preview.toolbar.prettifyCode")}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="size-7 rounded-lg p-1"
+                  onClick={onCopy}
+                  size="sm"
+                  type="button"
+                  variant="ghost"
+                >
+                  <i className="i-hugeicons-copy-01 size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {t("preview.toolbar.copyCode")}
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
       </div>
