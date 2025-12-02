@@ -14,8 +14,10 @@ import {
   ItemTitle,
 } from "@tiny-svg/ui/shared/item";
 import { useState } from "react";
+import { useTranslation } from "@/i18n/hooks";
 import type { Preset } from "@/types/messages";
 import { DeleteConfirmationDialog } from "@/ui/components/preset/delete-confirmation-dialog";
+import { formatRelativeTime } from "@/ui/lib/format-time";
 import { usePluginStore } from "@/ui/store";
 
 interface PresetListItemProps {
@@ -24,30 +26,12 @@ interface PresetListItemProps {
   isSelected?: boolean;
 }
 
-function formatRelativeTime(timestamp: number): string {
-  const now = Date.now();
-  const diff = now - timestamp;
-  const days = Math.floor(diff / 86_400_000);
-  const hours = Math.floor(diff / 3_600_000);
-  const minutes = Math.floor(diff / 60_000);
-
-  if (days > 0) {
-    return `${days} 天前`;
-  }
-  if (hours > 0) {
-    return `${hours} 小时前`;
-  }
-  if (minutes > 0) {
-    return `${minutes} 分钟前`;
-  }
-  return "刚刚";
-}
-
 export function PresetListItem({
   preset,
   usageCount = 0,
   isSelected = false,
 }: PresetListItemProps) {
+  const { t } = useTranslation();
   const { openPresetEditor, deletePreset, pinPreset } = usePluginStore();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -84,12 +68,14 @@ export function PresetListItem({
             {preset.name}
             {preset.isDefault && (
               <Badge className="text-xs" variant="secondary">
-                系统
+                {t("presets.item.systemBadge")}
               </Badge>
             )}
           </ItemTitle>
           <div className="text-muted-foreground text-xs">
-            使用 {usageCount} 次 • {formatRelativeTime(preset.updatedAt)}
+            {t("presets.item.usageTime")
+              .replace("{count}", String(usageCount))
+              .replace("{time}", formatRelativeTime(preset.updatedAt, t))}
           </div>
         </ItemContent>
 
@@ -98,10 +84,18 @@ export function PresetListItem({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label={preset.pinned ? "取消置顶" : "置顶"}
+                  aria-label={
+                    preset.pinned
+                      ? t("presets.item.actions.unpin")
+                      : t("presets.item.actions.pin")
+                  }
                   onClick={handlePin}
                   size="icon-sm"
-                  title={preset.pinned ? "取消置顶" : "置顶"}
+                  title={
+                    preset.pinned
+                      ? t("presets.item.actions.unpin")
+                      : t("presets.item.actions.pin")
+                  }
                   variant="ghost"
                 >
                   <span
@@ -114,56 +108,62 @@ export function PresetListItem({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {preset.pinned ? "取消置顶" : "置顶"}
+                {preset.pinned
+                  ? t("presets.item.actions.unpin")
+                  : t("presets.item.actions.pin")}
               </TooltipContent>
             </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label="编辑"
+                  aria-label={t("presets.item.actions.edit")}
                   onClick={handleEdit}
                   size="icon-sm"
-                  title="编辑"
+                  title={t("presets.item.actions.edit")}
                   variant="ghost"
                 >
                   <span className="i-hugeicons-pencil-edit-01 size-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>编辑</TooltipContent>
+              <TooltipContent>{t("presets.item.actions.edit")}</TooltipContent>
             </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label="复制"
+                  aria-label={t("presets.item.actions.duplicate")}
                   onClick={handleDuplicate}
                   size="icon-sm"
-                  title="复制"
+                  title={t("presets.item.actions.duplicate")}
                   variant="ghost"
                 >
                   <span className="i-hugeicons-copy-01 size-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>复制</TooltipContent>
+              <TooltipContent>
+                {t("presets.item.actions.duplicate")}
+              </TooltipContent>
             </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  aria-label="删除"
+                  aria-label={t("presets.item.actions.delete")}
                   className="hover:bg-destructive hover:text-destructive-foreground"
                   disabled={preset.isDefault}
                   onClick={handleDelete}
                   size="icon-sm"
-                  title="删除"
+                  title={t("presets.item.actions.delete")}
                   variant="ghost"
                 >
                   <span className="i-hugeicons-delete-02 size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                {preset.isDefault ? "默认预设不能删除" : "删除"}
+                {preset.isDefault
+                  ? t("presets.item.actions.cannotDeleteDefault")
+                  : t("presets.item.actions.delete")}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
