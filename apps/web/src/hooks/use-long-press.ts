@@ -23,6 +23,7 @@ export function useLongPress(options: UseLongPressOptions) {
   const timeoutRef = useRef<number | null>(null);
   const intervalRef = useRef<number | null>(null);
   const isLongPressRef = useRef(false);
+  const hasStartedRef = useRef(false);
 
   const cleanup = useCallback(() => {
     if (timeoutRef.current) {
@@ -34,6 +35,7 @@ export function useLongPress(options: UseLongPressOptions) {
       intervalRef.current = null;
     }
     isLongPressRef.current = false;
+    hasStartedRef.current = false;
   }, []);
 
   const start = useCallback(() => {
@@ -42,6 +44,7 @@ export function useLongPress(options: UseLongPressOptions) {
     }
 
     cleanup();
+    hasStartedRef.current = true;
     isLongPressRef.current = false;
 
     // Initial delay before starting continuous zoom
@@ -57,10 +60,11 @@ export function useLongPress(options: UseLongPressOptions) {
   }, [disabled, cleanup, onLongPress, delay, interval]);
 
   const stop = useCallback(() => {
+    const wasStarted = hasStartedRef.current;
     cleanup();
 
-    // If it was a quick press (not long-press), trigger onClick
-    if (!isLongPressRef.current && onClick && !disabled) {
+    // If it was a quick press (not long-press) and was properly started, trigger onClick
+    if (wasStarted && !isLongPressRef.current && onClick && !disabled) {
       onClick();
     }
 
@@ -82,8 +86,18 @@ export function useLongPress(options: UseLongPressOptions) {
   }, [stop]);
 
   const onMouseLeave = useCallback(() => {
-    stop();
-  }, [stop]);
+    // Only stop the long press action when mouse leaves, but don't trigger onClick
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    isLongPressRef.current = false;
+    hasStartedRef.current = false;
+  }, []);
 
   const onTouchStart = useCallback(
     (e: React.TouchEvent) => {
