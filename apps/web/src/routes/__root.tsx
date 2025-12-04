@@ -5,8 +5,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Toaster } from "@tiny-svg/ui/components/sonner";
 import { lazy, Suspense } from "react";
+import { ClientToaster } from "@/components/client-toaster";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
 import appCss from "@/styles.css?url";
@@ -160,7 +160,7 @@ function RootDocument() {
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>
-          <Toaster richColors />
+          <ClientToaster />
           <Suspense fallback={null}>
             <PWAUpdatePrompt />
             <InstallPrompt />

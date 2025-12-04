@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const headerContent = {
+const headerContent: Dictionary = {
   key: "header",
   content: {
     nav: {
@@ -34,6 +34,6 @@ const headerContent = {
       }),
     },
   },
-} satisfies Dictionary;
+};
 
 export default headerContent;

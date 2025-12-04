@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@tiny-svg/ui/components/card";
-import type { Locales } from "intlayer";
+import type { LocalesValues } from "intlayer";
 import { useCallback, useMemo } from "react";
 import { useIntlayer } from "react-intlayer";
 import { toast } from "sonner";
@@ -22,10 +22,10 @@ import { useSvgStore } from "@/store/svg-store";
 const LATEST_POSTS_COUNT = 4;
 
 export const Route = createFileRoute("/{-$locale}/")({
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { locale: LocalesValues } }) => {
     const latestPosts = getLatestBlogPosts(
       LATEST_POSTS_COUNT,
-      params.locale as Locales,
+      params.locale,
       "desc"
     );
     return { latestPosts };

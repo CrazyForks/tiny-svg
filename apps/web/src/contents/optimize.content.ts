@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const optimizeContent = {
+const optimizeContent: Dictionary = {
   key: "optimize",
   content: {
     title: t({
@@ -544,6 +544,6 @@ const optimizeContent = {
       }),
     },
   },
-} satisfies Dictionary;
+};
 
 export default optimizeContent;

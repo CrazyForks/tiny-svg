@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const homeContent = {
+const homeContent: Dictionary = {
   key: "home",
   content: {
     hero: {
@@ -167,6 +167,6 @@ const homeContent = {
       }),
     },
   },
-} satisfies Dictionary;
+};
 
 export default homeContent;

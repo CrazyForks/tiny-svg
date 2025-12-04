@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const pluginsContent = {
+const pluginsContent: Dictionary = {
   key: "plugins",
   content: {
     removeDoctype: t({
@@ -319,6 +319,6 @@ const pluginsContent = {
       fr: "Supprimer les attributs obsolètes",
     }),
   },
-} satisfies Dictionary;
+};
 
 export default pluginsContent;

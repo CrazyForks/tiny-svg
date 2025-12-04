@@ -1,9 +1,9 @@
 import { allPosts } from "content-collections";
 import { sortBy } from "es-toolkit";
-import { Locales } from "intlayer";
+import { Locales, type LocalesValues } from "intlayer";
 
 export function getBlogPosts(
-  locale: Locales = Locales.ENGLISH,
+  locale: LocalesValues = Locales.ENGLISH,
   order: "asc" | "desc" = "asc"
 ) {
   let readyPosts = sortBy(allPosts, ["createdAt"]);
@@ -18,7 +18,7 @@ export function getBlogPosts(
 
 export async function getBlogPost(
   slug: string,
-  locale: Locales = Locales.ENGLISH
+  locale: LocalesValues = Locales.ENGLISH
 ) {
   // Get all posts without locale filtering to find all versions of this slug
   const collections = allPosts.filter((blog) => blog.slug === slug);
@@ -38,7 +38,7 @@ export async function getBlogPost(
 
 export function getLatestBlogPosts(
   limit = 4,
-  locale: Locales = Locales.ENGLISH,
+  locale: LocalesValues = Locales.ENGLISH,
   order: "asc" | "desc" = "asc"
 ) {
   const posts = getBlogPosts(locale, order);

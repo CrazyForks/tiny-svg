@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const blogContent = {
+const blogContent: Dictionary = {
   key: "blog",
   content: {
     backToAllPosts: t({
@@ -32,6 +32,6 @@ const blogContent = {
       fr: "Copié !",
     }),
   },
-} satisfies Dictionary;
+};
 
 export default blogContent;
