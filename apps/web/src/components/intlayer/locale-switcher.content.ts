@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const localeSwitcherContent = {
+const localeSwitcherContent: Dictionary = {
   content: {
     languageListLabel: t({
       en: "Language list",

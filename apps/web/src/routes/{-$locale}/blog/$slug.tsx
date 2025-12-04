@@ -1,12 +1,16 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import type { Locales } from "intlayer";
+import type { LocalesValues } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { MDX } from "@/components/mdx-wrapper";
 import { getBlogPost } from "@/lib/blog";
 
 export const Route = createFileRoute("/{-$locale}/blog/$slug")({
-  loader: async ({ params }) => {
-    const post = await getBlogPost(params.slug, params.locale as Locales);
+  loader: async ({
+    params,
+  }: {
+    params: { locale: LocalesValues; slug: string };
+  }) => {
+    const post = await getBlogPost(params.slug, params.locale);
     if (!post) {
       throw notFound();
     }
@@ -84,7 +88,7 @@ function BlogDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
       {/* Structured Data */}
       <script
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

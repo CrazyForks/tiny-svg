@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type { Locales } from "intlayer";
+import type { LocalesValues } from "intlayer";
 import { useIntlayer } from "react-intlayer";
 import { LocalizedLink } from "@/components/intlayer/localized-link";
 import { getBlogPosts } from "@/lib/blog";
 
 export const Route = createFileRoute("/{-$locale}/blog/")({
-  loader: async ({ params }) => {
-    const posts = getBlogPosts(params.locale as Locales, "desc");
+  loader: async ({ params }: { params: { locale: LocalesValues } }) => {
+    const posts = getBlogPosts(params.locale, "desc");
     return { posts };
   },
   head: () => ({

@@ -17,14 +17,14 @@
     "build:packages": "pnpm --filter './packages/*' build"
   },
   "dependencies": {
-    "dotenv": "^17.2.2"
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.0",
-    "@types/node": "^22.13.11",
+    "@types/node": "^22.19.1",
     "husky": "^9.1.7",
-    "tsdown": "^0.16.7",
+    "tsdown": "^0.16.8",
     "ultracite": "6.0.0"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.24.0"
 }

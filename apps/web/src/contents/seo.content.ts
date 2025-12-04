@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const seoContent = {
+const seoContent: Dictionary = {
   key: "seo",
   content: {
     title: t({
@@ -53,6 +53,6 @@ const seoContent = {
       fr: "Tiny SVG",
     }),
   },
-} satisfies Dictionary;
+};
 
 export default seoContent;

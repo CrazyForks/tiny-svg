@@ -1,6 +1,6 @@
 import { type Dictionary, t } from "intlayer";
 
-const aboutContent = {
+const aboutContent: Dictionary = {
   key: "about",
   content: {
     title: t({
@@ -214,6 +214,6 @@ const aboutContent = {
       }),
     },
   },
-} satisfies Dictionary;
+};
 
 export default aboutContent;

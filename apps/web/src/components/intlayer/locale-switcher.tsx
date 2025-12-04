@@ -5,11 +5,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@tiny-svg/ui/components/dropdown-menu";
-import { getLocaleName, getPathWithoutLocale, Locales } from "intlayer";
+import {
+  getLocaleName,
+  getPathWithoutLocale,
+  Locales,
+  type LocalesValues,
+} from "intlayer";
 import type { FC } from "react";
-import { setLocaleCookie, useLocale } from "react-intlayer";
+import { setLocaleInStorage, useLocale } from "react-intlayer";
 
-const localeFlags: Partial<Record<Locales, string>> = {
+const localeFlags: Partial<Record<LocalesValues, string>> = {
   [Locales.ENGLISH]: "🇺🇸",
   [Locales.CHINESE]: "🇨🇳",
   [Locales.KOREAN]: "🇰🇷",
@@ -23,12 +28,12 @@ export const LocaleSwitcher: FC = () => {
   const { availableLocales, locale } = useLocale();
   const { pathname } = useLocation();
 
-  const currentFlag = localeFlags[locale as Locales] || "🌐";
+  const currentFlag = localeFlags[locale as LocalesValues] || "🌐";
   const currentLabel = getLocaleName(locale);
 
-  const handleLocaleChange = (newLocale: Locales) => {
-    // Set cookie for persistence
-    setLocaleCookie(newLocale);
+  const handleLocaleChange = (newLocale: LocalesValues) => {
+    // Set storage for persistence
+    setLocaleInStorage(newLocale);
 
     // Get path without locale prefix
     const pathWithoutLocale = getPathWithoutLocale(pathname);
@@ -42,7 +47,7 @@ export const LocaleSwitcher: FC = () => {
     // Construct new URL with locale prefix
     const newPath = `/${newLocale}${cleanPath}`;
 
-    // Use setTimeout to ensure cookie is set before navigation
+    // Use setTimeout to ensure storage is set before navigation
     // This prevents SSR hydration mismatch causing language flash
     setTimeout(() => {
       window.location.href = newPath;
@@ -67,10 +72,10 @@ export const LocaleSwitcher: FC = () => {
           <DropdownMenuItem
             className={locale === localeEl ? "bg-accent" : ""}
             key={localeEl}
-            onClick={() => handleLocaleChange(localeEl as Locales)}
+            onClick={() => handleLocaleChange(localeEl as LocalesValues)}
           >
             <span className="mr-2 text-base">
-              {localeFlags[localeEl as Locales] || "🌐"}
+              {localeFlags[localeEl as LocalesValues] || "🌐"}
             </span>
             <span>{getLocaleName(localeEl)}</span>
             {locale === localeEl && (
