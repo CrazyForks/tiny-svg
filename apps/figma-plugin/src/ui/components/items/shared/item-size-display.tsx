@@ -1,3 +1,5 @@
+import { formatCompressionRatio, formatSize } from "@tiny-svg/svg";
+
 interface ItemSizeDisplayProps {
   originalSize?: number;
   compressedSize?: number;
@@ -5,24 +7,20 @@ interface ItemSizeDisplayProps {
   mode?: "full" | "compression-only";
 }
 
-const formatSize = (bytes: number | undefined): string => {
+const formatSizeWithFallback = (bytes: number | undefined): string => {
   if (!bytes) {
     return "-";
   }
-  if (bytes < 1024) {
-    return `${bytes}B`;
-  }
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)}KB`;
-  }
-  return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+  return formatSize(bytes);
 };
 
-const formatCompressionRatio = (ratio: number | undefined): string => {
+const formatCompressionRatioWithParens = (
+  ratio: number | undefined
+): string => {
   if (!ratio) {
     return "";
   }
-  return `(-${Math.round(ratio * 100)}%)`;
+  return `(${formatCompressionRatio(ratio)})`;
 };
 
 export function ItemSizeDisplay({
@@ -34,7 +32,7 @@ export function ItemSizeDisplay({
   if (mode === "compression-only") {
     return compressionRatio ? (
       <span className="font-semibold text-success">
-        {formatCompressionRatio(compressionRatio)}
+        {formatCompressionRatioWithParens(compressionRatio)}
       </span>
     ) : null;
   }
@@ -42,17 +40,17 @@ export function ItemSizeDisplay({
   return compressedSize ? (
     <>
       <span className="line-through opacity-70">
-        {formatSize(originalSize)}
+        {formatSizeWithFallback(originalSize)}
       </span>
       {" → "}
       <span className="font-medium text-foreground">
-        {formatSize(compressedSize)}
+        {formatSizeWithFallback(compressedSize)}
       </span>{" "}
       <span className="font-semibold text-success">
-        {formatCompressionRatio(compressionRatio)}
+        {formatCompressionRatioWithParens(compressionRatio)}
       </span>
     </>
   ) : (
-    <span>{formatSize(originalSize)}</span>
+    <span>{formatSizeWithFallback(originalSize)}</span>
   );
 }

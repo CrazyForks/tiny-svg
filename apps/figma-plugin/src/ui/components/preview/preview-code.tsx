@@ -8,6 +8,7 @@ import { highlight } from "@tiny-svg/ui/lib/syntax-highlight";
 import React, { useEffect, useState } from "react";
 import { useCodeViewer } from "@/ui/hooks/preview/use-code-viewer";
 import { useDiffViewer } from "@/ui/hooks/preview/use-diff-viewer";
+import { cn } from "@/ui/lib/utils";
 import { usePluginStore } from "@/ui/store";
 
 interface PreviewCodeProps {
@@ -93,12 +94,15 @@ function CodeViewer({
                   {index + 1}
                 </td>
                 <td
-                  className={wrapLines ? "break-all pr-6" : "text-nowrap pr-6"}
+                  className={cn(
+                    "pr-6",
+                    wrapLines ? "break-all" : "text-nowrap"
+                  )}
                 >
                   <span
-                    className={
+                    className={cn(
                       wrapLines ? "whitespace-pre-wrap" : "whitespace-pre"
-                    }
+                    )}
                   >
                     {highlightedNodes.map((node, idx) => {
                       const nodeKey = `${lineKey}-node-${idx}`;

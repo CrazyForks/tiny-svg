@@ -21,6 +21,7 @@ export {
   calculateCompressionRatio,
   calculateSize,
   createSvgState,
+  formatCompressionRatio,
   formatSize,
   updateCompressionResult,
   validateSvg,

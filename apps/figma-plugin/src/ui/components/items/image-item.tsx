@@ -32,7 +32,6 @@ export const ImageItem = memo(function ImageItemComponent({
 
       return (
         <ActionButton
-          buttonClassName="h-6 rounded-lg"
           isLoading={loading}
           label={IMAGE_FORMAT_LABELS[format]}
           onCopy={() => handleCopy(format)}

@@ -27,15 +27,8 @@ export async function prettifyCode(code: string): Promise<string> {
   }
 }
 
-/**
- * Format compression ratio as percentage string
- */
-export function formatCompressionRatio(ratio: number | undefined): string {
-  if (!ratio) {
-    return "";
-  }
-  return `-${Math.round(ratio * 100)}%`;
-}
+// Re-export for backward compatibility
+export { formatCompressionRatio } from "@tiny-svg/svg";
 
 /**
  * Hook for copy to clipboard with toast notification

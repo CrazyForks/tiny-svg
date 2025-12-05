@@ -18,7 +18,7 @@ export const DropdownActionItem = memo(function DropdownActionItemComponent({
   isLoading = false,
 }: DropdownActionItemProps) {
   return (
-    <div className="flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5">
+    <div className="flex w-full items-center justify-between gap-2">
       <span className="shrink-0 text-xs">{label}</span>
       <div className="flex gap-1">
         <Button

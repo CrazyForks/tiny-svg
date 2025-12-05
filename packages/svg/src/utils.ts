@@ -32,6 +32,13 @@ export function formatSize(bytes: number): string {
   return `${Number.parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
 }
 
+export function formatCompressionRatio(ratio: number | undefined): string {
+  if (!ratio) {
+    return "";
+  }
+  return `-${Math.round(ratio * 100)}%`;
+}
+
 export function validateSvg(svg: string): boolean {
   try {
     const parser = new DOMParser();

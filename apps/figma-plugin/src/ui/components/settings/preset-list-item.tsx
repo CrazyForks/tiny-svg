@@ -99,11 +99,10 @@ export function PresetListItem({
                   variant="ghost"
                 >
                   <span
-                    className={
-                      preset.pinned
-                        ? "i-hugeicons-pin size-4 text-primary"
-                        : "i-hugeicons-pin size-4"
-                    }
+                    className={cn(
+                      "i-hugeicons-pin size-4",
+                      preset.pinned && "text-primary"
+                    )}
                   />
                 </Button>
               </TooltipTrigger>

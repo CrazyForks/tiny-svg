@@ -1,6 +1,7 @@
 import { Button } from "@tiny-svg/ui/components/button";
 import { ButtonGroup } from "@tiny-svg/ui/components/button-group";
 import { memo } from "react";
+import { cn } from "@/ui/lib/utils";
 
 interface ActionButtonProps {
   label: string;
@@ -21,12 +22,15 @@ export const ActionButton = memo(function ActionButtonComponent({
   onCopy,
   isLoading = false,
   className = "w-full",
-  buttonClassName = "h-7",
+  buttonClassName = "h-6 rounded-lg",
 }: ActionButtonProps) {
   return (
-    <div className={`group relative ${className}`}>
+    <div className={cn("group relative", className)}>
       <Button
-        className={`${buttonClassName} w-full font-medium text-xs group-hover:text-transparent`}
+        className={cn(
+          buttonClassName,
+          "w-full font-medium text-xs group-hover:text-transparent"
+        )}
         size="sm"
         type="button"
         variant="outline"
@@ -34,29 +38,32 @@ export const ActionButton = memo(function ActionButtonComponent({
         {label}
       </Button>
       <ButtonGroup
-        className={`absolute inset-0 hidden ${buttonClassName} w-full group-hover:flex`}
+        className={cn(
+          "absolute inset-0 hidden w-full group-hover:flex",
+          buttonClassName
+        )}
       >
         <Button
           aria-label={`Download ${label}`}
-          className={`${buttonClassName} grow p-0`}
+          className={cn(buttonClassName, "grow p-0")}
           disabled={isLoading}
           onClick={onDownload}
           title={`Download ${label}`}
           type="button"
           variant="outline"
         >
-          <span className="i-hugeicons-download-01 size-4" />
+          <span className="i-hugeicons-download-01 size-3.5" />
         </Button>
         <Button
           aria-label={`Copy ${label}`}
-          className={`${buttonClassName} grow p-0`}
+          className={cn(buttonClassName, "grow p-0")}
           disabled={isLoading}
           onClick={onCopy}
           title={`Copy ${label}`}
           type="button"
           variant="outline"
         >
-          <span className="i-hugeicons-copy-01 size-4" />
+          <span className="i-hugeicons-copy-01 size-3.5" />
         </Button>
       </ButtonGroup>
     </div>

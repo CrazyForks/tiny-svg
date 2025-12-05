@@ -85,7 +85,7 @@ export const CodeItem = memo(function CodeItemComponent({
           <DropdownMenuTrigger asChild>
             <Button
               aria-label="More code formats"
-              className="h-7 w-full rounded-lg pr-1 pl-2"
+              className="h-6 w-full rounded-lg pr-1 pl-2"
               size="sm"
               title="More code formats"
               type="button"
@@ -101,7 +101,7 @@ export const CodeItem = memo(function CodeItemComponent({
           >
             {DROPDOWN_FORMATS.map((format) => (
               <DropdownMenuItem
-                className="cursor-default p-0 hover:bg-accent focus:bg-transparent"
+                className="cursor-default p-0 hover:bg-accent focus:bg-transparent focus:text-foreground"
                 key={format}
                 onSelect={(e) => e.preventDefault()}
               >
