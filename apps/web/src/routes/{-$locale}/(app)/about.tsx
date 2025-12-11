@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useIntlayer } from "react-intlayer";
 
-export const Route = createFileRoute("/{-$locale}/about")({
+export const Route = createFileRoute("/{-$locale}/(app)/about")({
   component: AboutComponent,
 });
 

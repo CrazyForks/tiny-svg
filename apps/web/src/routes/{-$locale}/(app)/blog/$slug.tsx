@@ -4,7 +4,7 @@ import { useIntlayer } from "react-intlayer";
 import { MDX } from "@/components/mdx-wrapper";
 import { getBlogPost } from "@/lib/blog";
 
-export const Route = createFileRoute("/{-$locale}/blog/$slug")({
+export const Route = createFileRoute("/{-$locale}/(app)/blog/$slug")({
   loader: async ({
     params,
   }: {

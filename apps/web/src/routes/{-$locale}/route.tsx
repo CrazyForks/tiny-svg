@@ -1,10 +1,36 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { configuration, getPrefix } from "intlayer";
 import { IntlayerProvider, useLocale } from "react-intlayer";
-import Header from "@/components/header";
 import { useI18nHTMLAttributes } from "@/hooks/use-i18n-html-attrs";
+import { NotFoundComponent } from "./404";
+
+const { defaultLocale, locales } = configuration.internationalization;
+const { mode } = configuration.routing;
 
 export const Route = createFileRoute("/{-$locale}")({
+  beforeLoad: async ({ params }) => {
+    // Get locale from route params (not from server headers, as beforeLoad runs on both client and server)
+    const localeParam = params.locale;
+
+    // If no locale provided (optional param), it's valid (will use default)
+    // In prefix-all mode, the locale is required to be a valid locale
+    const { localePrefix } = getPrefix(localeParam ?? defaultLocale, { mode });
+    if (localePrefix === localeParam && localeParam === undefined) {
+      return;
+    }
+
+    // Check if the provided locale is valid
+    const isValidLocale = locales.some((localeEl) => localeEl === localeParam);
+
+    if (!isValidLocale) {
+      throw redirect({
+        params: { locale: undefined }, // Locale param is undefined in routing.mode = 'prefix-no-default', but can be changed by defaultLocale in routing.mode = 'prefix-all'
+        to: "/{-$locale}/404",
+      });
+    }
+  },
   component: LayoutComponent,
+  notFoundComponent: NotFoundComponent,
 });
 
 function LayoutComponent() {
@@ -18,10 +44,7 @@ function LayoutComponent() {
 
   return (
     <IntlayerProvider locale={safeLocale}>
-      <div className="grid h-svh grid-rows-[auto_1fr] overflow-x-hidden">
-        <Header />
-        <Outlet />
-      </div>
+      <Outlet />
     </IntlayerProvider>
   );
 }
