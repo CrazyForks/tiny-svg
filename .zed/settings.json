@@ -44,6 +44,13 @@
         "source.fixAll.biome": true,
         "source.organizeImports.biome": true
       }
+    },
+    "JSON": {
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
     }
   },
   "lsp": {

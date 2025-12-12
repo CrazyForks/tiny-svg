@@ -21,7 +21,7 @@ import { useSvgStore } from "@/store/svg-store";
 
 const LATEST_POSTS_COUNT = 4;
 
-export const Route = createFileRoute("/{-$locale}/")({
+export const Route = createFileRoute("/{-$locale}/(app)/")({
   loader: async ({ params }: { params: { locale: LocalesValues } }) => {
     const latestPosts = getLatestBlogPosts(
       LATEST_POSTS_COUNT,

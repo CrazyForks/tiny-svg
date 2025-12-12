@@ -4,7 +4,7 @@ import { useIntlayer } from "react-intlayer";
 import { LocalizedLink } from "@/components/intlayer/localized-link";
 import { getBlogPosts } from "@/lib/blog";
 
-export const Route = createFileRoute("/{-$locale}/blog/")({
+export const Route = createFileRoute("/{-$locale}/(app)/blog/")({
   loader: async ({ params }: { params: { locale: LocalesValues } }) => {
     const posts = getBlogPosts(params.locale, "desc");
     return { posts };
